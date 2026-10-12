@@ -1,4 +1,4 @@
-"""Ligne de commande : python -m medai_ml {datasheet,run}."""
+"""Ligne de commande : python -m medai_ml {datasheet,gallery,run,compare,calibrate,robustness,sanity}."""
 
 from __future__ import annotations
 
@@ -29,7 +29,39 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--root", default=str(DEFAULT_ROOT))
     r.add_argument("--reports", default="reports")
     r.add_argument("--artifacts", default="artifacts")
+    c = sub.add_parser("compare", help="Compare des rapports à une référence (AUC apparié, Holm).")
+    c.add_argument("--baseline", required=True, help="run_id de la référence (resnet18).")
+    c.add_argument("--others", nargs="+", required=True, help="run_id des autres modèles.")
+    c.add_argument("--reports", default="reports")
+    c.add_argument("--n-boot", type=int, default=2000)
+    k = sub.add_parser("calibrate", help="Temperature scaling sur un rapport existant.")
+    k.add_argument("--run", required=True)
+    k.add_argument("--reports", default="reports")
+    for name, text in (
+        ("robustness", "Robustesse aux perturbations (test uniquement)."),
+        ("sanity", "Test de sanité de Grad-CAM par randomisation des poids."),
+    ):
+        a = sub.add_parser(name, help=text)
+        a.add_argument("--run", required=True)
+        a.add_argument("--reports", default="reports")
+        a.add_argument("--artifacts", default="artifacts")
+        a.add_argument("--root", default=str(DEFAULT_ROOT))
     args = p.parse_args(argv)
+
+    if args.cmd in {"compare", "calibrate", "robustness", "sanity"}:
+        from . import analyze
+
+        reports = Path(args.reports)
+        if args.cmd == "compare":
+            out = analyze.compare_runs(reports, args.baseline, args.others, args.n_boot)
+        elif args.cmd == "calibrate":
+            out = analyze.calibrate_run(reports, args.run)
+        elif args.cmd == "robustness":
+            out = analyze.robustness_run(reports, Path(args.artifacts), args.run, Path(args.root))
+        else:
+            out = analyze.sanity_run(reports, Path(args.artifacts), args.run, Path(args.root))
+        print(f"Analyse écrite : {out}")
+        return 0
 
     if args.cmd == "datasheet":
         bundle = load_pneumoniamnist(args.size, args.root)

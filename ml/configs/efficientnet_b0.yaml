@@ -1,0 +1,14 @@
+# Comparaison avec resnet18 (protocole, section 3).
+model_id: efficientnet_b0
+pretrained: true
+dataset: pneumoniamnist
+size: 224
+seeds: [0, 1, 2, 3, 4]
+epochs: 15
+batch_size: 64
+lr: 0.0003
+weight_decay: 0.0001
+patience: 4
+n_bootstrap: 2000
+sensitivity_target: 0.95
+device: auto

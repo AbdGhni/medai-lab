@@ -3,4 +3,4 @@
 __version__ = "0.1.0"
 
 DISCLAIMER = "Prototype de recherche. Ne pas utiliser pour un diagnostic ou une décision clinique."
-PROTOCOL_VERSION = "1.0"
+PROTOCOL_VERSION = "1.2"

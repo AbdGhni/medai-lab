@@ -1,10 +1,19 @@
 # Protocole d'évaluation (pré-enregistré)
 
-Version 1.1 - 12/10/2026
+Version 1.2 - 12/10/2026
 
 Historique
 - 1.0 (12/10/2026) : version initiale, avant tout entraînement.
 - 1.1 (12/10/2026) : précision de la méthode de détection de doublons (section 2) et ajout des constats de la fiche de données réelle. Aucun entraînement n'avait été exécuté ; aucune règle d'analyse (métriques, seuils, tests) n'est modifiée.
+
+- 1.2 (12/10/2026) : précisions des analyses de phase 4 (sections 7 à 11), écrites avant tout résultat entraîné. Les règles du protocole principal (données, métriques, seuils, bootstrap de la section 8, premier alinéa) ne changent pas. Détail des changements ci-dessous.
+
+Changements de la version 1.2
+- Section 8 : le critère "l'intervalle corrigé exclut zéro" est remplacé par "p-valeur bootstrap ajustée par Holm < 0,05", plus simple à appliquer à trois comparaisons. L'intervalle à 95 % non corrigé et un intervalle conservateur de niveau 1 - 0,05/3 sont tous deux rapportés avec l'estimation de l'effet.
+- Section 7 : les prédictions de validation sont archivées avec les rapports (predictions.npz) pour ajuster la température sans toucher au test.
+- Section 9 : bootstrap de robustesse à 500 réplicats (au lieu de 2000) pour limiter le coût ; valeur consignée dans chaque fichier d'analyse.
+- Section 10 : critère du test de sanité fixé avant toute exécution (voir cette section).
+- Section 11 : non implémentée à ce jour (voir cette section).
 
 Ce protocole est figé avant tout entraînement. Toute modification ultérieure est faite par une nouvelle version datée, avec la raison du changement, et les résultats obtenus sous l'ancienne version restent publiés. Les analyses non prévues ici sont étiquetées "exploratoires" dans les rapports.
 
@@ -75,8 +84,8 @@ Le seuil 0,5 est rapporté à titre indicatif seulement.
 
 - Variabilité d'entraînement : moyenne et écart-type des métriques sur les 5 seeds.
 - Variabilité d'échantillonnage du test : bootstrap non paramétrique stratifié sur les images de test, 2000 rééchantillonnages, intervalle percentile à 95 %. Pour un modèle, chaque réplicat calcule la métrique de chaque seed sur les mêmes images rééchantillonnées puis en fait la moyenne.
-- Comparaison primaire : chaque modèle contre resnet18 sur l'AUC, par bootstrap apparié (mêmes réplicats pour les deux modèles) ; différence d'AUC avec intervalle à 95 %. Trois comparaisons, correction de Holm-Bonferroni. Une différence est dite "établie" si l'intervalle corrigé exclut zéro ; sinon la formulation est "pas de différence démontrée".
-- Complément : test de DeLong sur les probabilités moyennées sur les seeds (ensemble de seeds), et test de McNemar au seuil S1.
+- Comparaison primaire : chaque modèle contre resnet18 sur l'AUC, par bootstrap apparié (mêmes réplicats pour les deux modèles) ; différence d'AUC avec intervalle à 95 %. Trois comparaisons, correction de Holm-Bonferroni. Une différence est dite "établie" si la p-valeur bootstrap bilatérale ajustée par Holm est inférieure à 0,05 (p = 2 min(P(d <= 0), P(d >= 0)) sur 2000 réplicats, correction +1) ; sinon la formulation est "pas de différence démontrée".
+- Complément : test de DeLong sur les probabilités moyennées sur les seeds (ensemble de seeds), et test de McNemar exact au seuil S1 (moyenne des seuils S1 des seeds pour chaque modèle) sur ces mêmes probabilités moyennées.
 - Aucune p-valeur n'est présentée sans l'estimation de l'effet et son intervalle.
 
 ## 9. Robustesse
@@ -92,15 +101,18 @@ Perturbations appliquées uniquement au test (jamais à l'entraînement), 5 nive
 | Compression JPEG (qualité) | 90 ; 70 ; 50 ; 30 ; 10 |
 | Rotation (degrés) | 5 ; 10 ; 15 ; 20 ; 30 |
 
-Rapport : AUC, sensibilité et spécificité aux seuils S1 et S2 (non recalculés) en fonction de la sévérité, avec intervalles bootstrap. Les valeurs de niveau pourront être ajustées avant les expériences finales si elles sont jugées irréalistes ; tout ajustement est consigné dans une nouvelle version du protocole.
+Rapport : AUC, sensibilité et spécificité aux seuils S1 et S2 (non recalculés) en fonction de la sévérité, avec intervalles bootstrap. Bootstrap : 500 réplicats, moyenne sur les seeds à chaque réplicat. Graine de bruit fixe, rotation sans redimensionnement (bords à 0). Les valeurs de niveau pourront être ajustées avant les expériences finales si elles sont jugées irréalistes ; tout ajustement est consigné dans une nouvelle version du protocole.
 
 ## 10. Explicabilité
 
 - Méthode : Grad-CAM (et Grad-CAM++) sur la dernière couche convolutive de chaque architecture compatible.
 - Test de sanité (Adebayo et al., 2018) : comparaison de la carte du modèle entraîné avec celle du même modèle dont les poids sont randomisés progressivement (de la dernière couche à la première) ; corrélation de rang et SSIM rapportées. Une méthode dont la carte ne change pas quand les poids sont randomisés est déclarée non fiable pour ce modèle.
+- Réalisation (v1.2) : fractions randomisées 25 %, 50 %, 75 %, 100 % des couches Conv2d et Linear, en partant de la sortie ; les couches de normalisation ne sont pas réinitialisées. 16 images de test : les 8 premières de chaque classe, sélection fixée sans regarder les cartes. Corrélation de rang de Spearman et SSIM (fenêtre uniforme 7x7) entre la carte entraînée et la carte randomisée. Critère fixé avant exécution : corrélation de rang moyenne à 100 % de randomisation < 0,3 (ou carte constante) pour déclarer le test réussi pour une seed ; sinon la méthode est déclarée non fiable pour ce modèle. Ce critère est heuristique ; le test est qualitatif.
 - Les cartes sont présentées comme des indices de localisation, pas comme des preuves de raisonnement. Aucune évaluation par un radiologue n'est faite : cette absence est mentionnée.
 
 ## 11. Décalage de domaine (analyse exploratoire, phase 4)
+
+Statut v1.2 : non implémentée. Elle exige de télécharger ChestMNIST (volume important) et une définition d'étiquette à valider ; elle ne sera lancée qu'avec l'accord explicite de l'utilisateur. Aucun résultat n'est annoncé.
 
 Évaluation des modèles entraînés sur PneumoniaMNIST contre l'étiquette "pneumonia" de ChestMNIST (radiographies d'adultes, étiquetées automatiquement à partir de comptes rendus). Prévalence faible : AUC et AUC précision-rappel sont les métriques principales ; les seuils S1/S2 de PneumoniaMNIST sont appliqués sans changement. Les différences de population, de définition d'étiquette et de bruit d'étiquette sont rappelées dans le rapport. Aucune conclusion causale n'est tirée.
 
