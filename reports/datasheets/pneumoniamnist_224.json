@@ -1,0 +1,65 @@
+{
+  "dataset": "pneumoniamnist",
+  "size": 224,
+  "license": "CC BY 4.0",
+  "source_url": "https://zenodo.org/records/10519652/files/pneumoniamnist_224.npz?download=1",
+  "md5_expected": "d6a3c71de1b945ea11211b03746c1fe1",
+  "sha256": "2a6faaca43872b4bcf4154a79625631ab29683b41e265ab7936d0513351fe591",
+  "splits": {
+    "train": {
+      "n": 4708,
+      "n_pneumonia": 3494,
+      "n_normal": 1214,
+      "prevalence": 0.7421410365335599
+    },
+    "val": {
+      "n": 524,
+      "n_pneumonia": 389,
+      "n_normal": 135,
+      "prevalence": 0.7423664122137404
+    },
+    "test": {
+      "n": 624,
+      "n_pneumonia": 390,
+      "n_normal": 234,
+      "prevalence": 0.625
+    }
+  },
+  "image_shape": [
+    224,
+    224
+  ],
+  "pixel_dtype": "uint8",
+  "duplicates": {
+    "train_vs_test": {
+      "hash": "phash8",
+      "max_distance": 4,
+      "min_pixel_correlation": 0.99,
+      "candidate_pairs": 45,
+      "confirmed_duplicate_pairs": 0,
+      "images_a_confirmed": 0,
+      "images_b_confirmed": 0,
+      "max_pixel_correlation_of_candidates": 0.8613735191772267
+    },
+    "val_vs_test": {
+      "hash": "phash8",
+      "max_distance": 4,
+      "min_pixel_correlation": 0.99,
+      "candidate_pairs": 5,
+      "confirmed_duplicate_pairs": 0,
+      "images_a_confirmed": 0,
+      "images_b_confirmed": 0,
+      "max_pixel_correlation_of_candidates": 0.8611804843352479
+    },
+    "train_vs_val": {
+      "hash": "phash8",
+      "max_distance": 4,
+      "min_pixel_correlation": 0.99,
+      "candidate_pairs": 39,
+      "confirmed_duplicate_pairs": 10,
+      "images_a_confirmed": 10,
+      "images_b_confirmed": 8,
+      "max_pixel_correlation_of_candidates": 1.0000000000000002
+    }
+  }
+}

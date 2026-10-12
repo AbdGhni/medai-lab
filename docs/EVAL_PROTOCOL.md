@@ -1,6 +1,10 @@
 # Protocole d'évaluation (pré-enregistré)
 
-Version 1.0 - 12/10/2026
+Version 1.1 - 12/10/2026
+
+Historique
+- 1.0 (12/10/2026) : version initiale, avant tout entraînement.
+- 1.1 (12/10/2026) : précision de la méthode de détection de doublons (section 2) et ajout des constats de la fiche de données réelle. Aucun entraînement n'avait été exécuté ; aucune règle d'analyse (métriques, seuils, tests) n'est modifiée.
 
 Ce protocole est figé avant tout entraînement. Toute modification ultérieure est faite par une nouvelle version datée, avec la raison du changement, et les résultats obtenus sous l'ancienne version restent publiés. Les analyses non prévues ici sont étiquetées "exploratoires" dans les rapports.
 
@@ -12,10 +16,18 @@ Ce protocole est figé avant tout entraînement. Toute modification ultérieure 
 
 ## 2. Contrôles de validité des données (avant entraînement)
 
-- Vérification du checksum du fichier téléchargé.
-- Effectifs et prévalence par split.
-- Détection de doublons et quasi-doublons entre splits par hash perceptuel (pHash) ; le nombre de paires trouvées est publié. Si des doublons train/test existent, ils sont listés et une analyse de sensibilité sans ces images est ajoutée.
-- Limite connue, à rappeler dans chaque rapport : le jeu d'origine est pédiatrique (enfants), issu d'un seul centre, et la séparation par patient entre les splits n'est pas garantie. Les performances ne peuvent donc pas être interprétées comme une capacité de généralisation à d'autres populations ou équipements.
+- Vérification du checksum MD5 publié par MedMNIST ; empreinte SHA-256 du fichier enregistrée.
+- Effectifs et prévalence par split, lus dans les données.
+- Détection de doublons entre splits en deux temps : candidats par hash perceptuel (pHash 8x8, distance de Hamming <= 4), puis confirmation par corrélation de Pearson des pixels (>= 0,99). Le pHash seul est trop grossier pour des radiographies thoraciques, qui se ressemblent toutes à basse fréquence.
+- Si des doublons confirmés existent entre entraînement et test, ils sont listés et une analyse de sensibilité sans ces images est ajoutée.
+
+Constats de la fiche de données (reports/datasheets/pneumoniamnist_224.json, générée par le pipeline, taille 224) :
+- Effectifs : entraînement 4708 (3494 pneumonie), validation 524 (389 pneumonie), test 624 (390 pneumonie).
+- Prévalence de pneumonie : environ 74,2 % en entraînement, 74,2 % en validation, 62,5 % en test. Les seuils choisis sur la validation sont donc appliqués à un test de prévalence plus faible : sensibilité et spécificité sont comparables, mais la précision et le F1 ne le sont pas directement entre validation et test.
+- Entraînement contre test : 45 paires candidates, 0 doublon confirmé (corrélation maximale 0,86).
+- Validation contre test : 5 paires candidates, 0 doublon confirmé.
+- Entraînement contre validation : 39 paires candidates, 10 doublons confirmés (corrélation >= 0,99), dont 8 identiques au pixel près. La validation n'est donc pas indépendante de l'entraînement. Conséquence : l'AUC de validation (utilisée pour choisir l'epoch) et les seuils peuvent être légèrement optimistes. Le test, lui, ne contient aucun doublon confirmé de l'entraînement.
+- Limite connue, à rappeler dans chaque rapport : jeu pédiatrique, centre unique ; MedMNIST tire la validation au hasard (9:1) dans le jeu d'entraînement source, sans garantie de séparation par patient ; la séparation par patient entre entraînement et test n'est pas vérifiable avec les métadonnées disponibles.
 
 ## 3. Modèles comparés
 

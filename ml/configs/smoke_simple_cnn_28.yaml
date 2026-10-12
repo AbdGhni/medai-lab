@@ -1,0 +1,12 @@
+# Test de fumée uniquement : petite résolution, 2 seeds. Ne pas citer ces résultats comme performances.
+model_id: simple_cnn
+pretrained: false
+size: 28
+seeds: [0, 1]
+epochs: 3
+batch_size: 64
+lr: 0.001
+patience: 2
+n_bootstrap: 200
+train_subset: 512
+device: cpu

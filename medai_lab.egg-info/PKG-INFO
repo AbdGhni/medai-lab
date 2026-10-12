@@ -1,0 +1,27 @@
+Metadata-Version: 2.4
+Name: medai-lab
+Version: 0.1.0
+Summary: Plateforme d'évaluation de modèles d'IA pour l'imagerie médicale (prototype de recherche, aucun usage clinique).
+License: MIT
+Requires-Python: <3.14,>=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.26
+Requires-Dist: scipy>=1.11
+Requires-Dist: scikit-learn>=1.4
+Requires-Dist: pillow>=10.0
+Requires-Dist: pydantic>=2.6
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: medmnist>=3.0.2
+Requires-Dist: imagehash>=4.3
+Requires-Dist: torch>=2.4
+Requires-Dist: torchvision>=0.19
+Requires-Dist: timm>=1.0
+Requires-Dist: grad-cam>=1.5
+Requires-Dist: fastapi>=0.110
+Requires-Dist: uvicorn>=0.29
+
+# MedAI Lab
+
+Prototype de recherche : plateforme d'évaluation de modèles d'IA pour l'imagerie médicale. Ne pas utiliser pour un diagnostic ou une décision clinique.
+
+État : phase 2 (spécification). Voir docs/.
