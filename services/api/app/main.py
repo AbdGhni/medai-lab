@@ -181,11 +181,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except InferenceUnavailable as exc:
             raise HTTPException(409, f"Explication indisponible : {exc}") from exc
         sanity = store.analysis(rep.run_id, "gradcam_sanity")
-        sanity_passed = None if sanity is None else bool(sanity.get("passes_all_seeds"))
+        raw = None if sanity is None else sanity.get("passes_all_seeds")
+        sanity_passed = raw if isinstance(raw, bool) else None
         if sanity is None:
             note = (
                 "Indice de localisation uniquement. Le test de sanité par randomisation des poids "
                 "n'a pas encore été exécuté pour ce modèle."
+            )
+        elif sanity_passed is None:
+            note = (
+                "Indice de localisation uniquement. Le test de sanité a été exécuté mais n'est pas "
+                "concluant pour ce modèle (trop peu d'images exploitables sur au moins une seed)."
             )
         elif sanity_passed:
             note = (

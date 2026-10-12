@@ -17,3 +17,4 @@ apps/web/test-results/
 apps/web/next-env.d.ts
 apps/web/playwright-report/
 *.tsbuildinfo
+artifacts/**/*.pt

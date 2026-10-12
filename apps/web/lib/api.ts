@@ -175,11 +175,11 @@ export interface RobustnessAnalysis {
 
 export interface SanityAnalysis {
   model_id: string;
-  passes_all_seeds: boolean;
+  passes_all_seeds: boolean | null;
   per_seed: {
     seed: number;
-    passes: boolean;
+    passes: boolean | null;
     threshold_rank_corr: number;
-    rows: { fraction_randomized: number; rank_corr_mean: number | null; ssim_mean: number | null; n_undefined: number }[];
+    rows: { fraction_randomized: number; rank_corr_mean: number | null; ssim_mean: number | null; n_valid_images: number; n_excluded_base_constant: number; n_randomized_constant: number }[];
   }[];
 }

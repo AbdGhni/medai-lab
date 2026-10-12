@@ -238,9 +238,11 @@ export default async function AnalysesPage({ params }: { params: Promise<{ runId
         {sanity ? (
           <>
             <p className="max-w-[68ch] text-sm">
-              {sanity.passes_all_seeds
+              {sanity.passes_all_seeds === true
                 ? "Les cartes changent quand les poids sont randomisés, pour toutes les seeds. Cela ne démontre pas leur pertinence clinique."
-                : "Le test n'est pas réussi pour toutes les seeds : les cartes Grad-CAM ne sont pas fiables pour ce modèle."}
+                : sanity.passes_all_seeds === false
+                  ? "Le test n'est pas réussi pour toutes les seeds : les cartes Grad-CAM ne sont pas fiables pour ce modèle."
+                  : "Le test n'est pas concluant : trop peu d'images exploitables sur au moins une seed."}
             </p>
             <p className="text-muted mt-1 mb-4 max-w-[68ch] text-sm">
               Corrélation de rang et SSIM entre la carte du modèle entraîné et celle du modèle dont une fraction des
@@ -251,13 +253,14 @@ export default async function AnalysesPage({ params }: { params: Promise<{ runId
               {sanity.per_seed.map((ps) => (
                 <table key={ps.seed} className="text-left text-sm">
                   <caption className="mb-1 text-left font-medium">
-                    Seed {ps.seed} : {ps.passes ? "réussi" : "non réussi"}
+                    Seed {ps.seed} : {ps.passes === true ? "réussi" : ps.passes === false ? "non réussi" : "non concluant"}
                   </caption>
                   <thead className="text-muted">
                     <tr>
                       <th scope="col" className="pb-2 pr-6 font-normal">Couches randomisées</th>
                       <th scope="col" className="pb-2 pr-6 font-normal">Corrélation de rang</th>
-                      <th scope="col" className="pb-2 font-normal">SSIM</th>
+                      <th scope="col" className="pb-2 pr-6 font-normal">SSIM</th>
+                      <th scope="col" className="pb-2 font-normal">Images exploitables</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -267,7 +270,10 @@ export default async function AnalysesPage({ params }: { params: Promise<{ runId
                           {(r.fraction_randomized * 100).toLocaleString("fr-FR")} %
                         </th>
                         <td className="py-2 pr-6 tabular-nums">{num(r.rank_corr_mean)}</td>
-                        <td className="py-2 tabular-nums">{num(r.ssim_mean)}</td>
+                        <td className="py-2 pr-6 tabular-nums">{num(r.ssim_mean)}</td>
+                        <td className="py-2 tabular-nums">
+                          {r.n_valid_images} sur {r.n_valid_images + r.n_excluded_base_constant}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

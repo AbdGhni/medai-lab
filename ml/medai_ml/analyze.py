@@ -163,6 +163,13 @@ def robustness_run(
     return write_analysis(reports_dir, run_id, "robustness", out)
 
 
+def _all_pass(flags: list[object]) -> bool | None:
+    """True si toutes les seeds réussissent, False si l'une échoue, None si non évaluable."""
+    if any(f is False for f in flags):
+        return False
+    return True if flags and all(f is True for f in flags) else None
+
+
 def sanity_run(
     reports_dir: Path,
     artifacts_dir: Path,
@@ -188,6 +195,6 @@ def sanity_run(
         "model_id": rep.model_id,
         "image_indices": [int(i) for i in idx],
         "per_seed": per_seed,
-        "passes_all_seeds": all(bool(r["passes"]) for r in per_seed),
+        "passes_all_seeds": _all_pass([r["passes"] for r in per_seed]),
     }
     return write_analysis(reports_dir, run_id, "gradcam_sanity", payload)

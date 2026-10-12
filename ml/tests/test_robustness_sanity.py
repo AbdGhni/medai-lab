@@ -129,7 +129,7 @@ def test_gradcam_sanity_runs_and_reports_verdict() -> None:
     out = gradcam_sanity(model, "simple_cnn", x)
     assert [r["fraction_randomized"] for r in out["rows"]] == [0.25, 0.5, 0.75, 1.0]  # type: ignore[attr-defined]
     assert out["threshold_rank_corr"] == SANITY_RANK_CORR_MAX
-    assert isinstance(out["passes"], bool)
+    assert out["passes"] is None or isinstance(out["passes"], bool)
     json.dumps(out, allow_nan=False)
 
 
@@ -146,3 +146,44 @@ def test_write_analysis_never_overwrites_and_requires_report(tmp_path) -> None: 
         write_analysis(tmp_path, "run-x", "robustness", {"a": 2})
     with pytest.raises(ValueError):
         write_analysis(tmp_path, "run-x", "autre", {})
+
+
+def test_sanity_excludes_constant_base_maps_and_flags_unevaluable(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    import medai_ml.explain as ex
+
+    calls = {"n": 0}
+
+    def fake_gradcam(model, model_id, x, plus_plus=False):  # type: ignore[no-untyped-def]
+        calls["n"] += 1
+        b = x.shape[0]
+        rng = np.random.default_rng(calls["n"])
+        maps = rng.random((b, 8, 8)).astype(np.float32)
+        if calls["n"] == 1:  # carte du modèle entraîné : toutes constantes
+            maps[:] = 0.0
+        return maps
+
+    monkeypatch.setattr(ex, "gradcam", fake_gradcam)
+    model = build_model("simple_cnn", pretrained=False)
+    out = ex.gradcam_sanity(model, "simple_cnn", torch.zeros(6, 3, 32, 32))
+    assert out["passes"] is None
+    assert out["rows"][0]["n_excluded_base_constant"] == 6  # type: ignore[index]
+
+
+def test_sanity_randomized_constant_counts_as_zero_correlation(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    import medai_ml.explain as ex
+
+    calls = {"n": 0}
+
+    def fake_gradcam(model, model_id, x, plus_plus=False):  # type: ignore[no-untyped-def]
+        calls["n"] += 1
+        b = x.shape[0]
+        if calls["n"] == 1:
+            return np.random.default_rng(0).random((b, 8, 8)).astype(np.float32)
+        return np.zeros((b, 8, 8), dtype=np.float32)  # modèle randomisé : cartes nulles
+
+    monkeypatch.setattr(ex, "gradcam", fake_gradcam)
+    model = build_model("simple_cnn", pretrained=False)
+    out = ex.gradcam_sanity(model, "simple_cnn", torch.zeros(6, 3, 32, 32))
+    last = out["rows"][-1]  # type: ignore[index]
+    assert last["rank_corr_mean"] == 0.0 and last["n_randomized_constant"] == 6
+    assert out["passes"] is True

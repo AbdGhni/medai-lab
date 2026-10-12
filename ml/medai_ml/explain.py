@@ -112,37 +112,60 @@ def ssim(a: NDArray[np.float32], b: NDArray[np.float32], win: int = 7) -> float:
     return float(s.mean())
 
 
+SANITY_MIN_VALID_IMAGES = 4
+
+
 def gradcam_sanity(
     model: nn.Module, model_id: str, x: torch.Tensor, seed: int = 0
 ) -> dict[str, object]:
     """Compare les cartes Grad-CAM du modèle entraîné à celles du modèle randomisé en cascade.
 
     `x` : (B, 3, H, W) prétraité. Renvoie, par fraction randomisée, la corrélation de rang et
-    le SSIM moyens sur les images, et un verdict fondé sur SANITY_RANK_CORR_MAX.
+    le SSIM moyens, et un verdict fondé sur SANITY_RANK_CORR_MAX.
+
+    Cartes constantes : Grad-CAM applique un ReLU, une carte entièrement nulle signifie
+    « aucune évidence pour la classe pneumonie ». Si la carte du modèle entraîné est constante,
+    l'image est exclue (la comparaison n'a pas de sens). Si seule la carte randomisée est
+    constante, la corrélation de rang vaut 0 (plus aucune ressemblance). Avec moins de
+    SANITY_MIN_VALID_IMAGES images exploitables, le test est déclaré non évaluable (`passes=None`).
     """
     base = gradcam(model, model_id, x)
+    valid = [i for i in range(x.shape[0]) if np.ptp(base[i]) > 0]
     rows: list[dict[str, object]] = []
     for frac in SANITY_FRACTIONS:
         rnd = randomize_top_layers(model, frac, seed)
         maps = gradcam(rnd, model_id, x)
-        corrs = [rank_correlation(base[i], maps[i]) for i in range(x.shape[0])]
-        defined = [c for c in corrs if c is not None]
+        corrs: list[float] = []
+        n_rnd_const = 0
+        for i in valid:
+            c = rank_correlation(base[i], maps[i])
+            if c is None:
+                n_rnd_const += 1
+                c = 0.0
+            corrs.append(c)
         rows.append(
             {
                 "fraction_randomized": frac,
-                "rank_corr_mean": float(np.mean(defined)) if defined else None,
-                "n_undefined": len(corrs) - len(defined),
-                "ssim_mean": float(np.mean([ssim(base[i], maps[i]) for i in range(x.shape[0])])),
+                "rank_corr_mean": float(np.mean(corrs)) if corrs else None,
+                "n_valid_images": len(valid),
+                "n_excluded_base_constant": int(x.shape[0]) - len(valid),
+                "n_randomized_constant": n_rnd_const,
+                "ssim_mean": float(np.mean([ssim(base[i], maps[i]) for i in valid]))
+                if valid
+                else None,
             }
         )
     full = rows[-1]["rank_corr_mean"]
-    # Carte constante après randomisation = méthode clairement sensible aux poids.
-    sensitive = full is None or (isinstance(full, float) and full < SANITY_RANK_CORR_MAX)
+    passes: bool | None
+    if len(valid) < SANITY_MIN_VALID_IMAGES or not isinstance(full, float):
+        passes = None
+    else:
+        passes = bool(full < SANITY_RANK_CORR_MAX)
     return {
         "model_id": model_id,
         "n_images": int(x.shape[0]),
         "rows": rows,
         "threshold_rank_corr": SANITY_RANK_CORR_MAX,
-        "passes": bool(sensitive),
+        "passes": passes,
         "note": "Test qualitatif de Adebayo et al. (2018) ; ne démontre pas la validité clinique des cartes.",
     }

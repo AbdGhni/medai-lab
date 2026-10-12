@@ -225,5 +225,6 @@ def test_explain_reports_sanity_once_executed(analysed) -> None:  # type: ignore
     c, run_id, _ = analysed
     image_id = c.get("/gallery").json()["items"][0]["id"]
     body = c.post("/explain", json={"run_id": run_id, "image_id": image_id}).json()
-    assert body["sanity_checked"] is True and isinstance(body["sanity_passed"], bool)
+    assert body["sanity_checked"] is True
+    assert body["sanity_passed"] is None or isinstance(body["sanity_passed"], bool)
     assert "indice de localisation" in body["note"].lower()

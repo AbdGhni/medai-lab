@@ -84,7 +84,8 @@ def test_robustness_and_sanity_check_weights(runs, synthetic_bundle, monkeypatch
     rob = _load(analyze.robustness_run(reports, artifacts, base, n_boot=10, device_choice="cpu"))
     assert set(rob["perturbations"]) == {"brightness"} and rob["n_seeds"] == 2
     san = _load(analyze.sanity_run(reports, artifacts, base, n_per_class=2))
-    assert len(san["per_seed"]) == 2 and isinstance(san["passes_all_seeds"], bool)
+    assert len(san["per_seed"]) == 2
+    assert san["passes_all_seeds"] is None or isinstance(san["passes_all_seeds"], bool)
 
 
 def test_tampered_weights_are_rejected(runs, synthetic_bundle, monkeypatch) -> None:  # type: ignore[no-untyped-def]
