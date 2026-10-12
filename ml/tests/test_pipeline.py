@@ -95,6 +95,8 @@ def test_run_experiment_writes_valid_report(synthetic_bundle, tmp_path) -> None:
     # prédictions rejouables
     with np.load(run_dir / "predictions.npz") as z:
         assert z["probs"].shape == (2, len(synthetic_bundle.test))
+        assert z["val_probs"].shape == (2, len(synthetic_bundle.val))
+        assert z["y_val"].shape == (len(synthetic_bundle.val),)
     assert loaded.provenance.config_hash == cfg.hash()
 
 

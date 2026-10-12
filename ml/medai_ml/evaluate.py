@@ -74,6 +74,7 @@ def run_experiment(
     y_test = bundle.test.labels
     seed_results: list[SeedResult] = []
     test_probs: list[NDArray[np.float64]] = []
+    val_probs: list[NDArray[np.float64]] = []
     thresholds_by_seed: list[dict[str, float]] = []
     if artifacts_dir is not None:
         (artifacts_dir / run_id).mkdir(parents=True, exist_ok=True)
@@ -88,6 +89,7 @@ def run_experiment(
         model.load_state_dict(res.state_dict)
         p_test = predict_probs(model, bundle.test, cfg.batch_size, device, cfg.num_workers)
         test_probs.append(p_test)
+        val_probs.append(res.val_probs)
         thresholds_by_seed.append(thr)
         weights_sha = None
         if artifacts_dir is not None:
@@ -149,6 +151,8 @@ def run_experiment(
         y_test,
         test_probs,
         config_yaml=yaml.safe_dump(cfg.model_dump(mode="json"), sort_keys=True),
+        y_val=y_val,
+        val_probs_by_seed=val_probs,
     )
     return report, path
 

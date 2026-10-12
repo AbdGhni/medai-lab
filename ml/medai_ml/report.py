@@ -110,19 +110,28 @@ def write_report(
     y_test: NDArray[np.int64],
     test_probs_by_seed: list[NDArray[np.float64]],
     config_yaml: str | None = None,
+    y_val: NDArray[np.int64] | None = None,
+    val_probs_by_seed: list[NDArray[np.float64]] | None = None,
 ) -> Path:
-    """Écrit reports/<run_id>/{report.json, predictions.npz, config.yaml}. N'écrase jamais."""
+    """Écrit reports/<run_id>/{report.json, predictions.npz, config.yaml}. N'écrase jamais.
+
+    Les prédictions de validation (optionnelles) servent à ajuster la calibration sans toucher
+    au test ; les rapports plus anciens n'en contiennent pas.
+    """
     run_dir = Path(reports_dir) / report.run_id
     run_dir.mkdir(parents=True, exist_ok=False)  # FileExistsError si le rapport existe déjà
     payload = json.dumps(report.model_dump(mode="json"), indent=2, allow_nan=False)
     with open(run_dir / "report.json", "x", encoding="utf-8") as f:
         f.write(payload + "\n")
-    np.savez_compressed(
-        run_dir / "predictions.npz",
-        y_true=y_test.astype(np.int8),
-        seeds=np.array([s.seed for s in report.seeds], dtype=np.int64),
-        probs=np.stack(test_probs_by_seed).astype(np.float32),
-    )
+    arrays: dict[str, NDArray[np.generic]] = {
+        "y_true": y_test.astype(np.int8),
+        "seeds": np.array([s.seed for s in report.seeds], dtype=np.int64),
+        "probs": np.stack(test_probs_by_seed).astype(np.float32),
+    }
+    if y_val is not None and val_probs_by_seed is not None:
+        arrays["y_val"] = y_val.astype(np.int8)
+        arrays["val_probs"] = np.stack(val_probs_by_seed).astype(np.float32)
+    np.savez_compressed(run_dir / "predictions.npz", **arrays)  # type: ignore[arg-type]
     if config_yaml is not None:
         with open(run_dir / "config.yaml", "x", encoding="utf-8") as f:
             f.write(config_yaml)
