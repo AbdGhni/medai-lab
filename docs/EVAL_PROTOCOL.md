@@ -1,0 +1,101 @@
+# Protocole d'évaluation (pré-enregistré)
+
+Version 1.0 - 12/10/2026
+
+Ce protocole est figé avant tout entraînement. Toute modification ultérieure est faite par une nouvelle version datée, avec la raison du changement, et les résultats obtenus sous l'ancienne version restent publiés. Les analyses non prévues ici sont étiquetées "exploratoires" dans les rapports.
+
+## 1. Tâche et données
+
+- Tâche : classification binaire d'une radiographie thoracique, classe positive = pneumonie, classe négative = normal.
+- Jeu de données : PneumoniaMNIST (MedMNIST v2/+), taille 224x224, niveaux de gris, splits train / validation / test fournis par MedMNIST. Les effectifs sont lus programmatiquement et écrits dans la fiche de données ; ils ne sont pas recopiés de mémoire.
+- Le jeu de test n'est utilisé qu'une fois par modèle et par seed, pour le rapport final. Il n'est jamais utilisé pour choisir un hyperparamètre, une epoch, un seuil ou un modèle.
+
+## 2. Contrôles de validité des données (avant entraînement)
+
+- Vérification du checksum du fichier téléchargé.
+- Effectifs et prévalence par split.
+- Détection de doublons et quasi-doublons entre splits par hash perceptuel (pHash) ; le nombre de paires trouvées est publié. Si des doublons train/test existent, ils sont listés et une analyse de sensibilité sans ces images est ajoutée.
+- Limite connue, à rappeler dans chaque rapport : le jeu d'origine est pédiatrique (enfants), issu d'un seul centre, et la séparation par patient entre les splits n'est pas garantie. Les performances ne peuvent donc pas être interprétées comme une capacité de généralisation à d'autres populations ou équipements.
+
+## 3. Modèles comparés
+
+| Identifiant | Description |
+|---|---|
+| simple_cnn | CNN de 4 blocs convolutifs entraîné depuis zéro (référence basse) |
+| resnet18 | ResNet-18, poids ImageNet, couche finale remplacée (modèle de référence de la comparaison) |
+| densenet121 | DenseNet-121, poids ImageNet |
+| efficientnet_b0 | EfficientNet-B0 (timm), poids ImageNet |
+
+Les poids ImageNet proviennent de torchvision et timm, dont les licences sont consignées dans DATASETS.md. Les entrées en niveaux de gris sont répliquées sur 3 canaux et normalisées avec les statistiques ImageNet.
+
+## 4. Entraînement
+
+- Seeds : 0, 1, 2, 3, 4 (5 entraînements indépendants par modèle).
+- Perte : entropie croisée binaire avec pondération de classe calculée sur le train.
+- Optimiseur : AdamW, planificateur cosinus, taux d'apprentissage et décroissance de poids fixés dans la configuration de chaque modèle. Une recherche d'hyperparamètres éventuelle se fait uniquement sur la validation, avec un budget identique pour tous les modèles (même nombre d'essais), et est documentée.
+- Augmentation : translations et rotations faibles, variation de luminosité/contraste faible. Pas de retournement horizontal (la latéralité du cœur est une information anatomique).
+- Sélection de l'epoch : meilleure AUC de validation ; arrêt anticipé avec patience fixée dans la configuration.
+- Déterminisme : seeds Python, NumPy, PyTorch ; algorithmes déterministes activés quand disponibles ; matériel et versions enregistrés. Les résultats de référence sont tous produits sur le même matériel.
+
+## 5. Métriques
+
+Calculées sur le jeu de test, classe positive = pneumonie :
+- AUC ROC (métrique primaire) ; AUC précision-rappel (secondaire) ;
+- sensibilité (rappel), spécificité, précision (valeur prédictive positive), F1, exactitude équilibrée ;
+- nombre de vrais positifs, faux positifs, vrais négatifs, faux négatifs ;
+- Brier, ECE (voir section 7).
+
+## 6. Seuils de décision
+
+Deux points de fonctionnement, tous deux fixés sur la validation de chaque seed puis appliqués au test sans modification :
+- S1 : seuil maximisant l'indice de Youden (sensibilité + spécificité - 1) ;
+- S2 : plus grand seuil donnant une sensibilité de validation >= 0,95 (scénario de dépistage où les faux négatifs sont coûteux).
+
+Le seuil 0,5 est rapporté à titre indicatif seulement.
+
+## 7. Calibration
+
+- ECE avec 10 intervalles de largeur égale, et variante à intervalles d'effectif égal ; diagramme de fiabilité ; score de Brier.
+- Temperature scaling : un seul paramètre, ajusté sur la validation par minimisation de la log-vraisemblance négative, appliqué au test.
+- Les seuils S1 et S2 sont recalculés sur les probabilités calibrées de la validation ; les deux versions (avant/après) sont rapportées.
+
+## 8. Incertitude et comparaisons statistiques
+
+- Variabilité d'entraînement : moyenne et écart-type des métriques sur les 5 seeds.
+- Variabilité d'échantillonnage du test : bootstrap non paramétrique stratifié sur les images de test, 2000 rééchantillonnages, intervalle percentile à 95 %. Pour un modèle, chaque réplicat calcule la métrique de chaque seed sur les mêmes images rééchantillonnées puis en fait la moyenne.
+- Comparaison primaire : chaque modèle contre resnet18 sur l'AUC, par bootstrap apparié (mêmes réplicats pour les deux modèles) ; différence d'AUC avec intervalle à 95 %. Trois comparaisons, correction de Holm-Bonferroni. Une différence est dite "établie" si l'intervalle corrigé exclut zéro ; sinon la formulation est "pas de différence démontrée".
+- Complément : test de DeLong sur les probabilités moyennées sur les seeds (ensemble de seeds), et test de McNemar au seuil S1.
+- Aucune p-valeur n'est présentée sans l'estimation de l'effet et son intervalle.
+
+## 9. Robustesse
+
+Perturbations appliquées uniquement au test (jamais à l'entraînement), 5 niveaux de sévérité chacune :
+
+| Perturbation | Niveaux |
+|---|---|
+| Bruit gaussien (écart-type, image dans [0,1]) | 0,02 ; 0,05 ; 0,10 ; 0,20 ; 0,30 |
+| Flou gaussien (sigma, en pixels) | 0,5 ; 1 ; 1,5 ; 2 ; 3 |
+| Luminosité (facteur multiplicatif) | 0,6 ; 0,8 ; 1,2 ; 1,4 ; 1,6 |
+| Contraste (facteur) | 0,4 ; 0,6 ; 0,8 ; 1,2 ; 1,5 |
+| Compression JPEG (qualité) | 90 ; 70 ; 50 ; 30 ; 10 |
+| Rotation (degrés) | 5 ; 10 ; 15 ; 20 ; 30 |
+
+Rapport : AUC, sensibilité et spécificité aux seuils S1 et S2 (non recalculés) en fonction de la sévérité, avec intervalles bootstrap. Les valeurs de niveau pourront être ajustées avant les expériences finales si elles sont jugées irréalistes ; tout ajustement est consigné dans une nouvelle version du protocole.
+
+## 10. Explicabilité
+
+- Méthode : Grad-CAM (et Grad-CAM++) sur la dernière couche convolutive de chaque architecture compatible.
+- Test de sanité (Adebayo et al., 2018) : comparaison de la carte du modèle entraîné avec celle du même modèle dont les poids sont randomisés progressivement (de la dernière couche à la première) ; corrélation de rang et SSIM rapportées. Une méthode dont la carte ne change pas quand les poids sont randomisés est déclarée non fiable pour ce modèle.
+- Les cartes sont présentées comme des indices de localisation, pas comme des preuves de raisonnement. Aucune évaluation par un radiologue n'est faite : cette absence est mentionnée.
+
+## 11. Décalage de domaine (analyse exploratoire, phase 4)
+
+Évaluation des modèles entraînés sur PneumoniaMNIST contre l'étiquette "pneumonia" de ChestMNIST (radiographies d'adultes, étiquetées automatiquement à partir de comptes rendus). Prévalence faible : AUC et AUC précision-rappel sont les métriques principales ; les seuils S1/S2 de PneumoniaMNIST sont appliqués sans changement. Les différences de population, de définition d'étiquette et de bruit d'étiquette sont rappelées dans le rapport. Aucune conclusion causale n'est tirée.
+
+## 12. Reproductibilité et traçabilité
+
+Chaque rapport contient : identifiant d'exécution, commit git, hash de la configuration, hash du jeu de données, seed, versions de Python/PyTorch/bibliothèques, matériel, date. Les rapports sont immuables : une nouvelle exécution crée un nouveau rapport. L'interface lit exclusivement ces rapports.
+
+## 13. Critères de réussite (non de "bonne performance")
+
+Le projet n'impose aucun objectif de performance. Il est réussi si le protocole est suivi, si les résultats sont reproductibles et si les limites sont clairement présentées, quelle que soit la valeur des métriques obtenues.
