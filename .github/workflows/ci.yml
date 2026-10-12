@@ -121,6 +121,12 @@ jobs:
             curl -fsS http://127.0.0.1:8000/health && exit 0 || sleep 3
           done
           exit 1
+      - name: Attendre l'interface
+        run: |
+          for i in $(seq 1 40); do
+            curl -fsS http://127.0.0.1:3000/limites >/dev/null && exit 0 || sleep 3
+          done
+          exit 1
       - name: L'API sert le rapport
         run: curl -fsS http://127.0.0.1:8000/evaluations | grep -q simple_cnn
       - name: L'interface affiche la mise en garde
