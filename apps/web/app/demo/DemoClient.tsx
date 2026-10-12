@@ -17,6 +17,7 @@ interface Explanation {
   overlay_png_base64: string;
   method: string;
   sanity_checked: boolean;
+  sanity_passed: boolean | null;
   note: string;
 }
 

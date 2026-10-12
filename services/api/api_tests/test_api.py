@@ -4,6 +4,7 @@ import json
 import shutil
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import create_app
@@ -161,3 +162,68 @@ def test_uploads_are_refused_and_nothing_is_written(
 def test_openapi_documents_research_only(client: TestClient) -> None:
     spec = client.get("/openapi.json").json()
     assert "Ne pas utiliser pour un diagnostic" in spec["info"]["description"]
+
+
+# ------------------------------------------------------------------ analyses complémentaires
+
+
+@pytest.fixture()
+def analysed(workspace, bundle, tmp_path):  # type: ignore[no-untyped-def]
+    """Copie du espace de travail avec une analyse de sanité et une de calibration."""
+    import shutil
+
+    from medai_ml import analyze
+    from medai_ml.report import load_report
+
+    ws = tmp_path / "ws"
+    shutil.copytree(workspace["root"], ws)
+    run_id = next((ws / "reports").iterdir()).name
+    assert load_report(ws / "reports" / run_id / "report.json")
+    analyze.calibrate_run(ws / "reports", run_id)
+    analyze.sanity_run(ws / "reports", ws / "artifacts", run_id, n_per_class=2, bundle=bundle)
+    s = Settings(
+        reports_dir=ws / "reports", artifacts_dir=ws / "artifacts", gallery_dir=ws / "gallery"
+    )
+    return TestClient(create_app(s)), run_id, ws
+
+
+def test_analyses_empty_for_report_without_analyses(client: TestClient) -> None:
+    run_id = client.get("/evaluations").json()["items"][0]["run_id"]
+    r = client.get(f"/evaluations/{run_id}/analyses")
+    assert r.status_code == 200 and r.json()["items"] == []
+    assert client.get(f"/evaluations/{run_id}/analyses/robustness").status_code == 404
+
+
+def test_analyses_listed_and_served_with_disclaimer(analysed) -> None:  # type: ignore[no-untyped-def]
+    c, run_id, _ = analysed
+    names = {a["name"] for a in c.get(f"/evaluations/{run_id}/analyses").json()["items"]}
+    assert names == {"calibration", "gradcam_sanity"}
+    doc = c.get(f"/evaluations/{run_id}/analyses/calibration").json()
+    assert doc["run_id"] == run_id and "Ne pas utiliser" in doc["disclaimer"]
+
+
+def test_analysis_unknown_run_or_name_or_traversal(analysed) -> None:  # type: ignore[no-untyped-def]
+    c, run_id, _ = analysed
+    assert c.get("/evaluations/inconnu/analyses").status_code == 404
+    assert c.get("/evaluations/inconnu/analyses/calibration").status_code == 404
+    for bad in ("..%2Freport", "report", "../../etc/passwd", "calibration.json"):
+        assert c.get(f"/evaluations/{run_id}/analyses/{bad}").status_code == 404
+
+
+def test_inconsistent_analysis_is_not_served(analysed) -> None:  # type: ignore[no-untyped-def]
+    import json
+
+    c, run_id, ws = analysed
+    p = ws / "reports" / run_id / "analyses" / "calibration.json"
+    doc = json.loads(p.read_text())
+    doc["run_id"] = "autre"
+    p.write_text(json.dumps(doc))
+    assert c.get(f"/evaluations/{run_id}/analyses/calibration").status_code == 404
+
+
+def test_explain_reports_sanity_once_executed(analysed) -> None:  # type: ignore[no-untyped-def]
+    c, run_id, _ = analysed
+    image_id = c.get("/gallery").json()["items"][0]["id"]
+    body = c.post("/explain", json={"run_id": run_id, "image_id": image_id}).json()
+    assert body["sanity_checked"] is True and isinstance(body["sanity_passed"], bool)
+    assert "indice de localisation" in body["note"].lower()

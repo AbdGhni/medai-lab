@@ -142,6 +142,7 @@ def robustness_run(
     root: Path = DEFAULT_ROOT,
     device_choice: str = "auto",
     n_boot: int = 500,
+    bundle: DataBundle | None = None,
 ) -> Path:
     rep, _ = _run(reports_dir, run_id)
     device = resolve_device(device_choice)
@@ -150,7 +151,7 @@ def robustness_run(
     out = robustness_analysis(
         models,
         thr,
-        _bundle_for(rep, Path(root)).test,
+        (bundle or _bundle_for(rep, Path(root))).test,
         device,
         batch_size=int(rep.config.get("batch_size", 64)),
         n_boot=n_boot,
@@ -168,11 +169,12 @@ def sanity_run(
     run_id: str,
     root: Path = DEFAULT_ROOT,
     n_per_class: int = 8,
+    bundle: DataBundle | None = None,
 ) -> Path:
     rep, _ = _run(reports_dir, run_id)
     device = resolve_device("cpu")  # Grad-CAM sur 32 images : le CPU suffit
     models = _load_models(rep, artifacts_dir, device)
-    test = _bundle_for(rep, Path(root)).test
+    test = (bundle or _bundle_for(rep, Path(root))).test
     idx = np.concatenate(
         [np.flatnonzero(test.labels == c)[:n_per_class] for c in (0, 1)]
     )  # premières images de chaque classe : sélection déterministe, sans tri sur les cartes

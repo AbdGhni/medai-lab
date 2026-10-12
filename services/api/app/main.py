@@ -18,6 +18,8 @@ from medai_ml import DISCLAIMER, __version__
 
 from .inference import Gallery, InferenceUnavailable, Predictor
 from .schemas import (
+    AnalysisEntry,
+    AnalysisList,
     EvaluationDetail,
     EvaluationList,
     Explanation,
@@ -97,6 +99,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         rep = _get_report(run_id)
         return EvaluationDetail(report=rep.model_dump(mode="json"), summary=summarize(rep))
 
+    @app.get("/evaluations/{run_id}/analyses", response_model=AnalysisList)
+    def analyses(run_id: str) -> AnalysisList:
+        _get_report(run_id)
+        return AnalysisList(items=[AnalysisEntry(**a) for a in store.analyses(run_id)])
+
+    @app.get("/evaluations/{run_id}/analyses/{name}")
+    def analysis(run_id: str, name: str) -> dict[str, Any]:
+        _get_report(run_id)
+        doc = store.analysis(run_id, name)
+        if doc is None:
+            raise HTTPException(404, "Analyse non disponible pour cette évaluation.")
+        return doc
+
     @app.get("/gallery", response_model=GallerySchema)
     def gallery_list() -> GallerySchema:
         names: dict[str, str] = gallery.manifest.get("label_names", {})
@@ -165,6 +180,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             prob, overlay, heat = predictor.explain(rep, img, seed)
         except InferenceUnavailable as exc:
             raise HTTPException(409, f"Explication indisponible : {exc}") from exc
+        sanity = store.analysis(rep.run_id, "gradcam_sanity")
+        sanity_passed = None if sanity is None else bool(sanity.get("passes_all_seeds"))
+        if sanity is None:
+            note = (
+                "Indice de localisation uniquement. Le test de sanité par randomisation des poids "
+                "n'a pas encore été exécuté pour ce modèle."
+            )
+        elif sanity_passed:
+            note = (
+                "Indice de localisation uniquement. Le test de sanité par randomisation des poids "
+                "a été exécuté : les cartes changent quand les poids sont randomisés. Cela ne "
+                "démontre pas leur pertinence clinique."
+            )
+        else:
+            note = (
+                "Indice de localisation uniquement. Le test de sanité par randomisation des poids "
+                "a été exécuté et n'est pas réussi pour toutes les seeds : ces cartes ne sont pas "
+                "fiables pour ce modèle."
+            )
         return Explanation(
             run_id=req.run_id,
             image_id=req.image_id,
@@ -173,11 +207,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             probability_pneumonia=prob,
             overlay_png_base64=overlay,
             heatmap_png_base64=heat,
-            sanity_checked=False,
-            note=(
-                "Indice de localisation uniquement. Le test de sanité par randomisation des poids "
-                "n'a pas encore été exécuté pour ce modèle."
-            ),
+            sanity_checked=sanity is not None,
+            sanity_passed=sanity_passed,
+            note=note,
         )
 
     return app

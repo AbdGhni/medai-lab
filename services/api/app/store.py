@@ -5,7 +5,9 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
+from medai_ml.analysis import ANALYSIS_NAMES
 from medai_ml.report import EvaluationReport, load_report
 
 from .schemas import EvaluationSummary, MetricInterval
@@ -39,6 +41,37 @@ class ReportStore:
 
     def get(self, run_id: str) -> EvaluationReport | None:
         return self._reports.get(run_id)
+
+    def analysis(self, run_id: str, name: str) -> dict[str, Any] | None:
+        """Analyse complémentaire d'un rapport valide, relue sur disque à chaque appel.
+
+        Le nom est limité à une liste fermée et le rapport doit exister : aucun chemin fourni par
+        l'appelant n'est utilisé. Un fichier illisible ou incohérent est ignoré.
+        """
+        if name not in ANALYSIS_NAMES or run_id not in self._reports:
+            return None
+        path = self.reports_dir / run_id / "analyses" / f"{name}.json"
+        try:
+            doc = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+        if (
+            not isinstance(doc, dict)
+            or doc.get("analysis") != name
+            or doc.get("run_id") != run_id
+            or not doc.get("disclaimer")
+        ):
+            log.warning("Analyse ignorée (incohérente) : %s", path)
+            return None
+        return doc
+
+    def analyses(self, run_id: str) -> list[dict[str, str]]:
+        out: list[dict[str, str]] = []
+        for name in sorted(ANALYSIS_NAMES):
+            doc = self.analysis(run_id, name)
+            if doc is not None:
+                out.append({"name": name, "created_at": str(doc.get("created_at", ""))})
+        return out
 
     def all(self) -> list[EvaluationReport]:
         return sorted(self._reports.values(), key=lambda r: r.created_at, reverse=True)

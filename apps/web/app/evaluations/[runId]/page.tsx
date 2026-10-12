@@ -73,6 +73,11 @@ export default async function EvaluationPage({ params }: { params: Promise<{ run
         <p className="text-muted mt-1 text-sm">
           Exécuté le {dateFr(r.created_at)}, protocole {r.protocol_version}, {s.n_seeds} seeds, images {s.size}×{s.size}
         </p>
+        <p className="mt-2 text-sm">
+          <Link href={`/evaluations/${encodeURIComponent(runId)}/analyses`} className="underline underline-offset-4">
+            Analyses complémentaires : comparaison, calibration, robustesse, sanité Grad-CAM
+          </Link>
+        </p>
         {!s.is_reference && (
           <div role="note" className="bg-warn-bg text-warn mt-4 px-3 py-2 text-sm">
             <p>Cette exécution n&apos;est pas un résultat de référence. Ne pas la citer comme performance.</p>

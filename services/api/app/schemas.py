@@ -60,6 +60,15 @@ class EvaluationDetail(Base):
     summary: EvaluationSummary
 
 
+class AnalysisEntry(Base):
+    name: str
+    created_at: str
+
+
+class AnalysisList(Base):
+    items: list[AnalysisEntry]
+
+
 class GalleryItem(BaseModel):
     id: str
     label: int
@@ -100,4 +109,5 @@ class Explanation(Base):
     overlay_png_base64: str
     heatmap_png_base64: str
     sanity_checked: bool
+    sanity_passed: bool | None = None
     note: str

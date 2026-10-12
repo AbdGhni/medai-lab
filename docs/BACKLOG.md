@@ -23,7 +23,7 @@ Priorités MoSCoW. Estimation en jours de travail à temps partiel. Chaque élé
 
 ## Phase 4 - Fonctionnalités avancées
 
-Statut au 12/10/2026 : le code, les tests et les configurations de A01 à A05 sont prêts et testés sur données synthétiques ; aucun résultat réel n'existe encore (A01 attend les exécutions Colab, A02 à A05 attendent les rapports et les poids). A06 n'est pas implémenté (téléchargement à valider). A07 à A11 ne sont pas commencés.
+Statut au 12/10/2026 : le code, les tests et les configurations de A01 à A05 sont prêts et testés sur données synthétiques ; aucun résultat réel n'existe encore (A01 attend les exécutions Colab, A02 à A05 attendent les rapports et les poids). A07 : page d'analyses (comparaison, calibration, robustesse, sanité) livrée avec 4 tests e2e ; pas de pages dédiées par modèle. A06 n'est pas implémenté (téléchargement à valider). A08 à A11 ne sont pas commencés.
 
 | ID | Priorité | Élément | Critères d'acceptation | Est. |
 |---|---|---|---|---|

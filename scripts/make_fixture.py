@@ -12,6 +12,7 @@ from pathlib import Path
 
 import numpy as np
 
+from medai_ml import analyze
 from medai_ml.config import ExperimentConfig
 from medai_ml.data import DataBundle, DatasetInfo, Split
 from medai_ml.evaluate import run_experiment
@@ -42,9 +43,19 @@ def main(out: Path) -> None:
         n_bootstrap=200,
         device="cpu",
     )
-    run_experiment(
-        cfg, bundle, out / "reports", out / "artifacts", include_duplicates=False, log=print
+    reports, artifacts = out / "reports", out / "artifacts"
+    base, _ = run_experiment(cfg, bundle, reports, artifacts, include_duplicates=False, log=print)
+    other_cfg = cfg.model_copy(update={"epochs": 1})
+    other, _ = run_experiment(
+        other_cfg, bundle, reports, artifacts, include_duplicates=False, log=print
     )
+    # Analyses de phase 4 sur la première exécution (réduites : n_boot et perturbations limités).
+    analyze.compare_runs(reports, base.run_id, [other.run_id], n_boot=200)
+    analyze.calibrate_run(reports, base.run_id)
+    analyze.robustness_run(
+        reports, artifacts, base.run_id, n_boot=30, device_choice="cpu", bundle=bundle
+    )
+    analyze.sanity_run(reports, artifacts, base.run_id, n_per_class=2, bundle=bundle)
     build_gallery(bundle, out / "gallery", n_per_class=3)
     print(f"Fixture synthétique écrite dans {out}")
 

@@ -30,7 +30,7 @@ test("un rapport synthétique 28×28 n'est jamais présenté comme référence",
   await page.goto(WITH_REPORT + "/");
   await expect(page.getByRole("heading", { name: "Autres exécutions" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Résultats de référence" })).toHaveCount(0);
-  await page.getByRole("link", { name: "simple_cnn" }).click();
+  await page.getByRole("link", { name: "simple_cnn" }).first().click();
   await expect(page.getByText("n'est pas un résultat de référence")).toBeVisible();
   const main = (await page.locator("main").innerText()).replace(/\s+/g, " ");
   expect(main).toMatch(INTERVAL);
@@ -64,4 +64,55 @@ test("la page des limites expose les problèmes connus des données", async ({ p
   await page.goto(WITH_REPORT + "/limites");
   await expect(page.locator("main")).toContainText("doublons confirmés");
   await expect(page.locator("main")).toContainText("62,5 %");
+});
+
+async function runWithAnalyses(request: import("@playwright/test").APIRequestContext) {
+  const list = await (await request.get("http://127.0.0.1:8100/evaluations")).json();
+  for (const run of list.items) {
+    const a = await (await request.get(`http://127.0.0.1:8100/evaluations/${run.run_id}/analyses`)).json();
+    if (a.items.length > 0) return { run, analyses: a.items.map((i: { name: string }) => i.name) as string[] };
+  }
+  throw new Error("aucune évaluation avec analyses dans la fixture");
+}
+
+test("les analyses affichées sont celles de l'API, et seulement celles-là", async ({ page, request }) => {
+  const { run } = await runWithAnalyses(request);
+  const comp = await (await request.get(`http://127.0.0.1:8100/evaluations/${run.run_id}/analyses/comparison`)).json();
+  await page.goto(`${WITH_REPORT}/evaluations/${run.run_id}/analyses`);
+  await expect(page.getByRole("heading", { name: "Analyses complémentaires" })).toBeVisible();
+  for (const h of ["Comparaison avec le modèle de référence", "Calibration", "Robustesse aux perturbations", "Test de sanité de Grad-CAM"]) {
+    await expect(page.getByRole("heading", { name: h })).toBeVisible();
+  }
+  await expect(page.locator("main")).toContainText(comp.comparisons[0].wording);
+  await expect(page.locator("main")).toContainText("Compression JPEG");
+  await expect(page.locator("svg[role=img]").first()).toBeVisible();
+  await expect(page.getByText("n'est pas un résultat de référence")).toBeVisible();
+});
+
+test("une évaluation sans analyses l'indique et n'affiche aucun chiffre", async ({ page, request }) => {
+  const list = await (await request.get("http://127.0.0.1:8100/evaluations")).json();
+  let target: string | null = null;
+  for (const run of list.items) {
+    const a = await (await request.get(`http://127.0.0.1:8100/evaluations/${run.run_id}/analyses`)).json();
+    if (a.items.length === 0) target = run.run_id;
+  }
+  expect(target).not.toBeNull();
+  await page.goto(`${WITH_REPORT}/evaluations/${target}/analyses`);
+  await expect(page.getByText("Aucune valeur n'est affichée.")).toHaveCount(4);
+  const text = (await page.locator("main").innerText()).replace(/\s+/g, " ");
+  expect(text).not.toMatch(INTERVAL);
+  await expect(page.locator("svg[role=img]")).toHaveCount(0);
+});
+
+test("la page d'analyses d'un identifiant inconnu est introuvable", async ({ page }) => {
+  const res = await page.goto(WITH_REPORT + "/evaluations/inconnue/analyses");
+  expect(res?.status()).toBe(404);
+});
+
+test("la démo indique que le test de sanité a été exécuté quand c'est le cas", async ({ page, request }) => {
+  const { run, analyses } = await runWithAnalyses(request);
+  expect(analyses).toContain("gradcam_sanity");
+  const image = (await (await request.get("http://127.0.0.1:8100/gallery")).json()).items[0].id;
+  const body = await (await request.post("http://127.0.0.1:8100/explain", { data: { run_id: run.run_id, image_id: image } })).json();
+  expect(body.sanity_checked).toBe(true);
 });

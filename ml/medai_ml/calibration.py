@@ -88,6 +88,7 @@ def calibration_analysis(pred: Predictions) -> dict[str, Any]:
             {
                 "seed": int(seed),
                 "temperature": t,
+                "temperature_at_bound": bool(t < 0.0501 or t > 19.99),
                 "ece10_before": ece(pred.y_true, p_raw, 10),
                 "ece10_after": ece(pred.y_true, p_cal, 10),
                 "ece_adaptive_before": ece(pred.y_true, p_raw, 10, adaptive=True),
@@ -98,7 +99,7 @@ def calibration_analysis(pred: Predictions) -> dict[str, Any]:
                 "nll_after": nll(pred.y_true, p_cal),
             }
         )
-    keys = [k for k in per_seed[0] if k != "seed"]
+    keys = [k for k in per_seed[0] if k not in ("seed", "temperature_at_bound")]
     mean = {k: float(np.mean([r[k] for r in per_seed])) for k in keys}
     return {
         "per_seed": per_seed,
