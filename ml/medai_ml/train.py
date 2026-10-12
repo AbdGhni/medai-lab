@@ -46,6 +46,19 @@ def resolve_device(choice: str) -> torch.device:
     return torch.device(choice)
 
 
+_NORM = v2.Normalize(IMAGENET_MEAN, IMAGENET_STD)
+
+
+def preprocess_uint8(img: NDArray[np.uint8]) -> torch.Tensor:
+    """Prétraitement d'évaluation d'une image (H, W) uint8 -> tenseur (3, H, W) normalisé.
+
+    Identique à celui utilisé pour la validation et le test (sans augmentation).
+    """
+    t = torch.from_numpy(np.array(img, dtype=np.uint8)).float().div(255.0).unsqueeze(0)
+    out: torch.Tensor = _NORM(t.expand(3, -1, -1).contiguous())
+    return out
+
+
 class _ImageDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
     def __init__(self, split: Split, train: bool) -> None:
         self.x = torch.from_numpy(split.images)

@@ -124,3 +124,24 @@ def test_smoke_notes_flag_subset(synthetic_bundle, tmp_path) -> None:  # type: i
     )
     assert any("sous-échantillon" in n for n in report.notes)
     assert any("28x28" in n for n in report.notes)
+
+
+def test_api_preprocessing_equals_evaluation_preprocessing(synthetic_bundle) -> None:  # type: ignore[no-untyped-def]
+    """L'inférence de l'API doit prétraiter exactement comme la validation/le test."""
+    from medai_ml.train import _ImageDataset, preprocess_uint8
+
+    ds = _ImageDataset(synthetic_bundle.test, train=False)
+    for i in (0, 5, 17):
+        expected, _ = ds[i]
+        got = preprocess_uint8(synthetic_bundle.test.images[i])
+        torch.testing.assert_close(got, expected, rtol=0, atol=0)
+
+
+@pytest.mark.parametrize("name", ["simple_cnn", "resnet18", "densenet121", "efficientnet_b0"])
+def test_gradcam_works_for_every_architecture(name: str) -> None:
+    from medai_ml.explain import gradcam
+
+    m = build_model(name, pretrained=False)
+    cam = gradcam(m, name, torch.randn(2, 3, 64, 64))
+    assert cam.shape[0] == 2 and cam.ndim == 3
+    assert float(cam.min()) >= 0.0 and float(cam.max()) <= 1.0 + 1e-6

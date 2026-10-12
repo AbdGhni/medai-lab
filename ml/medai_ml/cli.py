@@ -19,6 +19,11 @@ def main(argv: list[str] | None = None) -> int:
     d.add_argument("--root", default=str(DEFAULT_ROOT))
     d.add_argument("--out", default=None, help="Fichier JSON de sortie (sinon stdout).")
     d.add_argument("--no-duplicates", action="store_true")
+    g = sub.add_parser("gallery", help="Construit la galerie de démonstration (images du test).")
+    g.add_argument("--size", type=int, default=224, choices=[28, 64, 128, 224])
+    g.add_argument("--root", default=str(DEFAULT_ROOT))
+    g.add_argument("--out", default="gallery")
+    g.add_argument("--n-per-class", type=int, default=12)
     r = sub.add_parser("run", help="Exécute le protocole pour une configuration.")
     r.add_argument("--config", required=True)
     r.add_argument("--root", default=str(DEFAULT_ROOT))
@@ -34,6 +39,14 @@ def main(argv: list[str] | None = None) -> int:
             Path(args.out).write_text(text + "\n", encoding="utf-8")
         else:
             print(text)
+        return 0
+
+    if args.cmd == "gallery":
+        from .gallery import build_gallery
+
+        bundle = load_pneumoniamnist(args.size, args.root)
+        manifest = build_gallery(bundle, Path(args.out), args.n_per_class)
+        print(f"{len(manifest['items'])} images écrites dans {args.out}")
         return 0
 
     cfg = load_config(args.config)

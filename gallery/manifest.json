@@ -1,0 +1,134 @@
+{
+  "dataset": "pneumoniamnist",
+  "size": 224,
+  "license": "CC BY 4.0",
+  "attribution": "Images issues de PneumoniaMNIST (MedMNIST v2), licence CC BY 4.0. Source d'origine : Kermany et al., Cell 2018. Redistribution MedMNIST : Yang et al., Scientific Data 2023. Images redimensionnées et recadrées par MedMNIST.",
+  "label_names": {
+    "0": "normal",
+    "1": "pneumonie"
+  },
+  "selection": "tirage aléatoire de 12 images par classe dans le test, seed 0",
+  "dataset_sha256": "2a6faaca43872b4bcf4154a79625631ab29683b41e265ab7936d0513351fe591",
+  "items": [
+    {
+      "id": "t000",
+      "test_index": 19,
+      "label": 0
+    },
+    {
+      "id": "t001",
+      "test_index": 36,
+      "label": 0
+    },
+    {
+      "id": "t002",
+      "test_index": 50,
+      "label": 0
+    },
+    {
+      "id": "t003",
+      "test_index": 93,
+      "label": 0
+    },
+    {
+      "id": "t004",
+      "test_index": 143,
+      "label": 0
+    },
+    {
+      "id": "t005",
+      "test_index": 164,
+      "label": 0
+    },
+    {
+      "id": "t006",
+      "test_index": 293,
+      "label": 0
+    },
+    {
+      "id": "t007",
+      "test_index": 376,
+      "label": 0
+    },
+    {
+      "id": "t008",
+      "test_index": 391,
+      "label": 0
+    },
+    {
+      "id": "t009",
+      "test_index": 492,
+      "label": 0
+    },
+    {
+      "id": "t010",
+      "test_index": 496,
+      "label": 0
+    },
+    {
+      "id": "t011",
+      "test_index": 560,
+      "label": 0
+    },
+    {
+      "id": "t012",
+      "test_index": 2,
+      "label": 1
+    },
+    {
+      "id": "t013",
+      "test_index": 11,
+      "label": 1
+    },
+    {
+      "id": "t014",
+      "test_index": 15,
+      "label": 1
+    },
+    {
+      "id": "t015",
+      "test_index": 53,
+      "label": 1
+    },
+    {
+      "id": "t016",
+      "test_index": 116,
+      "label": 1
+    },
+    {
+      "id": "t017",
+      "test_index": 249,
+      "label": 1
+    },
+    {
+      "id": "t018",
+      "test_index": 340,
+      "label": 1
+    },
+    {
+      "id": "t019",
+      "test_index": 451,
+      "label": 1
+    },
+    {
+      "id": "t020",
+      "test_index": 468,
+      "label": 1
+    },
+    {
+      "id": "t021",
+      "test_index": 528,
+      "label": 1
+    },
+    {
+      "id": "t022",
+      "test_index": 543,
+      "label": 1
+    },
+    {
+      "id": "t023",
+      "test_index": 613,
+      "label": 1
+    }
+  ]
+}
