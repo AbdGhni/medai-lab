@@ -113,16 +113,28 @@ jobs:
       - name: Construire l'image web
         run: docker build -f infra/web.Dockerfile -t medai-web:ci .
       - run: docker compose build
-      - name: Démarrage et vérifications
+      - name: Démarrer la pile
+        run: docker compose up -d
+      - name: Attendre l'API
         run: |
-          docker compose up -d
           for i in $(seq 1 40); do
-            curl -fsS http://127.0.0.1:8000/health && break || sleep 3
+            curl -fsS http://127.0.0.1:8000/health && exit 0 || sleep 3
           done
-          curl -fsS http://127.0.0.1:8000/evaluations | grep -q simple_cnn
-          curl -fsS http://127.0.0.1:3000/ | grep -q "Ne pas utiliser pour un diagnostic"
-          curl -fsS http://127.0.0.1:3000/api/health | grep -q '"status":"ok"'
-      - if: failure()
-        run: docker compose logs --no-color | tail -200
+          exit 1
+      - name: L'API sert le rapport
+        run: curl -fsS http://127.0.0.1:8000/evaluations | grep -q simple_cnn
+      - name: L'interface affiche la mise en garde
+        run: curl -fsS http://127.0.0.1:3000/ | grep -q "Ne pas utiliser pour un diagnostic"
+      - name: L'interface relaie l'API
+        run: curl -fsS http://127.0.0.1:3000/api/health | grep -q '"status":"ok"'
+      - name: Journaux Docker en cas d'échec
+        if: failure()
+        run: |
+          {
+            docker compose ps -a
+            docker compose logs --no-color --tail 60
+          } > "$RUNNER_TEMP/dc.log" 2>&1 || true
+          msg=$(tail -c 6000 "$RUNNER_TEMP/dc.log" | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')
+          echo "::error title=docker compose::$msg"
       - if: always()
         run: docker compose down -v
