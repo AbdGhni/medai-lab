@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@import "@fontsource-variable/ibm-plex-sans";
+
+/* Palette : fond gris film, encre bleu-noir, estimations en bleu, orange réservé aux mises en garde. */
+@theme {
+  --font-sans: "IBM Plex Sans Variable", system-ui, sans-serif;
+  --color-film: #edf0f2;
+  --color-ink: #14222b;
+  --color-muted: #566872;
+  --color-rule: #cbd3d8;
+  --color-est: #1f4fa3;
+  --color-est-soft: #9db4de;
+  --color-warn: #a3480b;
+  --color-warn-bg: #fcebdd;
+  --color-ok: #1d6b4a;
+}
+
+html {
+  background: var(--color-film);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  line-height: 1.55;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-est);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

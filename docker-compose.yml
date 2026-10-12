@@ -1,0 +1,38 @@
+# Démarrage local : docker compose up --build  puis http://localhost:3000
+# Les rapports, poids et images d'exemple sont montés en lecture seule depuis le dépôt.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: infra/api.Dockerfile
+    volumes:
+      - ./reports:/data/reports:ro
+      - ./artifacts:/data/artifacts:ro
+      - ./gallery:/data/gallery:ro
+    environment:
+      MEDAI_CORS_ORIGINS: "http://localhost:3000"
+    ports:
+      - "127.0.0.1:8000:8000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+  web:
+    build:
+      context: .
+      dockerfile: infra/web.Dockerfile
+      args:
+        API_URL: http://api:8000
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:3000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]

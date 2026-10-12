@@ -13,3 +13,7 @@ artifacts/*.pt
 .mypy_cache/
 .ruff_cache/
 htmlcov/
+apps/web/test-results/
+apps/web/next-env.d.ts
+apps/web/playwright-report/
+*.tsbuildinfo
