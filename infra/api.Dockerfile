@@ -1,5 +1,5 @@
 # API MedAI Lab (CPU). Construire depuis la racine du dépôt : docker build -f infra/api.Dockerfile .
-FROM python:3.13-slim AS build
+FROM python:3.14-slim AS build
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy PIP_DISABLE_PIP_VERSION_CHECK=1
 RUN pip install --no-cache-dir uv==0.11.* || pip install --no-cache-dir uv
 WORKDIR /app
@@ -8,7 +8,7 @@ COPY ml ml
 COPY services services
 RUN uv sync --frozen --no-dev
 
-FROM python:3.13-slim
+FROM python:3.14-slim
 ENV PATH="/app/.venv/bin:$PATH" PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
     MEDAI_REPORTS_DIR=/data/reports MEDAI_ARTIFACTS_DIR=/data/artifacts MEDAI_GALLERY_DIR=/data/gallery
 RUN useradd --system --uid 10001 --home /app medai
