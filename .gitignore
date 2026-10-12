@@ -7,3 +7,9 @@ node_modules/
 data/
 artifacts/*.pt
 .DS_Store
+.coverage
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
