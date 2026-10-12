@@ -1,6 +1,6 @@
 # Interface Next.js. Construire depuis la racine du dépôt : docker build -f infra/web.Dockerfile .
 FROM node:22-slim AS build
-RUN corepack enable
+RUN npm install -g pnpm@10.28.0
 WORKDIR /web
 COPY apps/web/package.json apps/web/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile

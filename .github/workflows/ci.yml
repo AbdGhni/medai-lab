@@ -108,6 +108,10 @@ jobs:
           uv run python scripts/make_fixture.py "$RUNNER_TEMP/fx"
           cp -r "$RUNNER_TEMP/fx/reports/." reports/
           cp -r "$RUNNER_TEMP/fx/artifacts/." artifacts/
+      - name: Construire l'image API
+        run: docker build -f infra/api.Dockerfile -t medai-api:ci .
+      - name: Construire l'image web
+        run: docker build -f infra/web.Dockerfile -t medai-web:ci .
       - run: docker compose build
       - name: Démarrage et vérifications
         run: |
