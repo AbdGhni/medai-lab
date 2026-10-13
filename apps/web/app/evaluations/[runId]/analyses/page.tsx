@@ -288,8 +288,10 @@ export default async function AnalysesPage({ params }: { params: Promise<{ runId
   );
 }
 
-export async function generateStaticParams(): Promise<{ runId: string }[]> {
-  if (!STATIC_EXPORT) return [];
+async function staticParams(): Promise<{ runId: string }[]> {
   const data = await serverGet<{ items: { run_id: string }[] }>("/evaluations");
   return (data?.items ?? []).map((e) => ({ runId: e.run_id }));
 }
+
+// Défini seulement pour l'export statique : sinon la route doit rester entièrement dynamique.
+export const generateStaticParams = STATIC_EXPORT ? staticParams : undefined;
