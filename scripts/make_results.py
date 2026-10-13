@@ -188,76 +188,134 @@ def build() -> str:
     )
     L.append("")
 
-    rp = runs[BASELINE] / "analyses" / "robustness.json"
-    if rp.exists():
-        r = _load(rp)
-        L.append("## Robustesse de resnet18 aux perturbations")
+    rob = {
+        m: _load(runs[m] / "analyses" / "robustness.json")
+        for m in ORDER
+        if m in runs and (runs[m] / "analyses" / "robustness.json").exists()
+    }
+    if rob:
+        L.append("## Robustesse aux perturbations")
         L.append("")
         L.append(
-            f"Source : `{rp.relative_to(ROOT)}`. Test uniquement ; les seuils S1 et S2 restent ceux "
-            "fixés sur la validation d'images non perturbées. Moyenne des 5 seeds."
+            "Test uniquement ; les seuils S1 et S2 restent ceux fixés sur la validation d'images "
+            "non perturbées. Moyenne des 5 seeds. Sources : "
+            + ", ".join(
+                f"`{(runs[m] / 'analyses' / 'robustness.json').relative_to(ROOT)}`" for m in rob
+            )
+            + "."
         )
         L.append("")
-        cl = r["clean"]
-        L.append(
-            f"Référence sans perturbation : AUC {cl['auc']['mean']:.3f}, spécificité S1 "
-            f"{cl['S1_youden/specificity']['mean']:.3f}, sensibilité S1 "
-            f"{cl['S1_youden/sensitivity']['mean']:.3f}."
-        )
+        L.append("### Synthèse : niveau le plus sévère de chaque perturbation")
         L.append("")
         L.append(
-            "| Perturbation | Niveau | AUC | Sensibilité S1 | Spécificité S1 | Spécificité S2 |"
+            "| Perturbation (niveau) | "
+            + " | ".join(f"{m} AUC / sens. S1 / spéc. S1" for m in rob)
+            + " |"
         )
-        L.append("|---|---|---|---|---|---|")
-        for name, rows in r["perturbations"].items():
-            for x in rows:
-                m2 = x["metrics"]
-                L.append(
-                    f"| {name} | {x['level']} | {m2['auc']['mean']:.3f} | "
-                    f"{m2['S1_youden/sensitivity']['mean']:.3f} | "
-                    f"{m2['S1_youden/specificity']['mean']:.3f} | "
-                    f"{m2['S2_sens95/specificity']['mean']:.3f} |"
+        L.append("|---|" + "---|" * len(rob))
+        first = next(iter(rob.values()))
+        L.append(
+            "| aucune | "
+            + " | ".join(
+                f"{r['clean']['auc']['mean']:.3f} / {r['clean']['S1_youden/sensitivity']['mean']:.3f} / "
+                f"{r['clean']['S1_youden/specificity']['mean']:.3f}"
+                for r in rob.values()
+            )
+            + " |"
+        )
+        for name, rows in first["perturbations"].items():
+            lvl = rows[-1]["level"]
+            cells = []
+            for r in rob.values():
+                x = r["perturbations"][name][-1]
+                cells.append(
+                    f"{x['metrics']['auc']['mean']:.3f} / {x['metrics']['S1_youden/sensitivity']['mean']:.3f} / "
+                    f"{x['metrics']['S1_youden/specificity']['mean']:.3f}"
                 )
+            L.append(f"| {name} ({lvl}) | " + " | ".join(cells) + " |")
         L.append("")
         L.append(
             "Lecture : l'AUC (le classement des images) se dégrade peu pour des perturbations "
-            "modérées, mais la spécificité aux seuils fixes chute fortement : le modèle déclare "
-            "alors presque tout positif. Un seuil choisi sur des données propres ne reste pas "
-            "valable sous décalage de distribution. C'est une limite majeure pour tout usage réel."
+            "modérées, mais les seuils fixes ne tiennent pas. Pour resnet18, densenet121 et "
+            "efficientnet_b0 (bruit, flou), la spécificité s'effondre : presque tout est déclaré "
+            "positif. Pour simple_cnn sous rotation de 30 degrés, c'est l'inverse : la spécificité "
+            "reste haute mais la sensibilité chute (des pneumonies ne sont plus détectées), ce qui "
+            "est plus grave pour un dépistage. Sous bruit fort (0,3), l'AUC tombe entre 0,48 et 0,60 "
+            "selon le modèle (proche du hasard). Un seuil choisi sur des données propres ne reste pas valable "
+            "sous décalage de distribution. C'est une limite majeure pour tout usage réel. "
+            "Les sévérités ont été fixées à l'avance, sans les ajuster aux modèles ; la sévérité "
+            "d'une perturbation n'est pas comparable d'un type à l'autre."
         )
         L.append("")
+        for m, r in rob.items():
+            L.append(f"### Détail : {m}")
+            L.append("")
+            cl = r["clean"]
+            L.append(
+                f"Référence sans perturbation : AUC {cl['auc']['mean']:.3f}, spécificité S1 "
+                f"{cl['S1_youden/specificity']['mean']:.3f}, sensibilité S1 "
+                f"{cl['S1_youden/sensitivity']['mean']:.3f}."
+            )
+            L.append("")
+            L.append(
+                "| Perturbation | Niveau | AUC | Sensibilité S1 | Spécificité S1 | Spécificité S2 |"
+            )
+            L.append("|---|---|---|---|---|---|")
+            for name, rows in r["perturbations"].items():
+                for x in rows:
+                    m2 = x["metrics"]
+                    L.append(
+                        f"| {name} | {x['level']} | {m2['auc']['mean']:.3f} | "
+                        f"{m2['S1_youden/sensitivity']['mean']:.3f} | "
+                        f"{m2['S1_youden/specificity']['mean']:.3f} | "
+                        f"{m2['S2_sens95/specificity']['mean']:.3f} |"
+                    )
+            L.append("")
 
-    sp = runs[BASELINE] / "analyses" / "gradcam_sanity.json"
-    if sp.exists():
-        s = _load(sp)
-        L.append("## Test de sanité de Grad-CAM (resnet18)")
+    san = {
+        m: _load(runs[m] / "analyses" / "gradcam_sanity.json")
+        for m in ORDER
+        if m in runs and (runs[m] / "analyses" / "gradcam_sanity.json").exists()
+    }
+    if san:
+        L.append("## Test de sanité de Grad-CAM")
         L.append("")
         L.append(
-            f"Source : `{sp.relative_to(ROOT)}`. Randomisation en cascade des couches "
-            "convolutives et linéaires (Adebayo et al., 2018), 16 images fixes du test, critère "
-            "fixé à l'avance : corrélation de rang moyenne < 0,3 une fois tous les poids "
-            "randomisés."
+            "Randomisation en cascade des couches convolutives et linéaires (Adebayo et al., "
+            "2018), 16 images fixes du test, critère fixé à l'avance : corrélation de rang moyenne "
+            "< 0,3 une fois tous les poids randomisés. Sources : "
+            + ", ".join(
+                f"`{(runs[m] / 'analyses' / 'gradcam_sanity.json').relative_to(ROOT)}`" for m in san
+            )
+            + "."
         )
         L.append("")
-        L.append("| Seed | Corrélation de rang à 100 % | Images exploitables | Verdict |")
-        L.append("|---|---|---|---|")
-        for i, ps in enumerate(s["per_seed"]):
-            last = ps["rows"][-1]
-            rc = last["rank_corr_mean"]
-            verdict = {
-                True: "critère satisfait",
-                False: "critère non satisfait",
-                None: "non concluant",
-            }[ps["passes"]]
+        L.append("| Modèle | Seed | Corrélation de rang à 100 % | Images exploitables | Verdict |")
+        L.append("|---|---|---|---|---|")
+        for m, sd in san.items():
+            for i, ps in enumerate(sd["per_seed"]):
+                last = ps["rows"][-1]
+                rc = last["rank_corr_mean"]
+                verdict = {
+                    True: "critère satisfait",
+                    False: "critère non satisfait",
+                    None: "non concluant",
+                }[ps["passes"]]
+                L.append(
+                    f"| {m} | {i} | {'n/a' if rc is None else f'{rc:.3f}'} | "
+                    f"{last['n_valid_images']} | {verdict} |"
+                )
+        L.append("")
+        for m, sd in san.items():
             L.append(
-                f"| {i} | {'n/a' if rc is None else f'{rc:.3f}'} | {last['n_valid_images']} | {verdict} |"
+                f"- {m} : critère satisfait pour toutes les seeds : "
+                f"**{'oui' if sd['passes_all_seeds'] else 'non'}**."
             )
         L.append("")
         L.append(
-            f"Critère satisfait pour toutes les seeds : **{'oui' if s['passes_all_seeds'] else 'non'}**. "
-            "Ce test est qualitatif et ne démontre pas la validité clinique des cartes ; tant qu'il "
-            "n'est pas satisfait pour toutes les seeds, les cartes ne sont présentées qu'à titre "
-            "indicatif."
+            "Ce test est qualitatif et ne démontre pas la validité clinique des cartes ; tant "
+            "qu'il n'est pas satisfait pour toutes les seeds, les cartes ne sont présentées qu'à "
+            "titre indicatif."
         )
         L.append("")
 

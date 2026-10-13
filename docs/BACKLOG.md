@@ -24,7 +24,7 @@ Priorités MoSCoW. Estimation en jours de travail à temps partiel. Chaque élé
 
 ## Phase 4 - Fonctionnalités avancées
 
-Statut au 14/10/2026 : A01 à A05 terminés avec de vrais rapports (4 modèles x 5 seeds ; comparaison et calibration pour les 4 modèles ; robustesse et sanité Grad-CAM pour resnet18 uniquement, voir RESULTS.md). A07 : page d'analyses livrée avec 4 tests e2e. A06 non implémenté (téléchargement à valider). A08 à A11 non commencés.
+Statut au 14/10/2026 : A01 à A05 terminés avec de vrais rapports (4 modèles x 5 seeds ; comparaison et calibration pour les 4 modèles ; robustesse et sanité Grad-CAM pour les 4 modèles, voir RESULTS.md). A07 : page d'analyses livrée avec 4 tests e2e. A06 non implémenté (téléchargement à valider). A08 à A11 non commencés.
 
 | ID | Priorité | Élément | Critères d'acceptation | Est. |
 |---|---|---|---|---|

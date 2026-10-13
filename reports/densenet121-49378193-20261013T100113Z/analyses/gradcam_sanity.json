@@ -1,0 +1,241 @@
+{
+  "analysis": "gradcam_sanity",
+  "run_id": "densenet121-49378193-20261013T100113Z",
+  "protocol_version": "1.2",
+  "disclaimer": "Prototype de recherche. Ne pas utiliser pour un diagnostic ou une d\u00e9cision clinique.",
+  "created_at": "2026-10-13T22:46:30Z",
+  "commit": "a436b10547d7f45324afd4a521abecbd21b3cf96",
+  "dirty": false,
+  "model_id": "densenet121",
+  "image_indices": [
+    1,
+    3,
+    9,
+    19,
+    20,
+    25,
+    27,
+    28,
+    0,
+    2,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10
+  ],
+  "per_seed": [
+    {
+      "model_id": "densenet121",
+      "n_images": 16,
+      "rows": [
+        {
+          "fraction_randomized": 0.25,
+          "rank_corr_mean": 0.11701883264502998,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.46579171113877166
+        },
+        {
+          "fraction_randomized": 0.5,
+          "rank_corr_mean": 0.09988539867041059,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.5004811713841133
+        },
+        {
+          "fraction_randomized": 0.75,
+          "rank_corr_mean": 0.18645284978501236,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.4614353225222167
+        },
+        {
+          "fraction_randomized": 1.0,
+          "rank_corr_mean": 0.15544582104221627,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.5263071395258675
+        }
+      ],
+      "threshold_rank_corr": 0.3,
+      "passes": true,
+      "note": "Test qualitatif de Adebayo et al. (2018) ; ne d\u00e9montre pas la validit\u00e9 clinique des cartes.",
+      "seed": 0
+    },
+    {
+      "model_id": "densenet121",
+      "n_images": 16,
+      "rows": [
+        {
+          "fraction_randomized": 0.25,
+          "rank_corr_mean": 0.18737065165501957,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.4412466081556636
+        },
+        {
+          "fraction_randomized": 0.5,
+          "rank_corr_mean": -0.1448544050877785,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.4269927195436339
+        },
+        {
+          "fraction_randomized": 0.75,
+          "rank_corr_mean": 0.15450281902993607,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.5510061175449148
+        },
+        {
+          "fraction_randomized": 1.0,
+          "rank_corr_mean": 0.11865687885639455,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.5481883625609664
+        }
+      ],
+      "threshold_rank_corr": 0.3,
+      "passes": true,
+      "note": "Test qualitatif de Adebayo et al. (2018) ; ne d\u00e9montre pas la validit\u00e9 clinique des cartes.",
+      "seed": 1
+    },
+    {
+      "model_id": "densenet121",
+      "n_images": 16,
+      "rows": [
+        {
+          "fraction_randomized": 0.25,
+          "rank_corr_mean": 0.16115675996312398,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.10742508296676795
+        },
+        {
+          "fraction_randomized": 0.5,
+          "rank_corr_mean": 0.10582703960149731,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 4,
+          "ssim_mean": 0.08419674020750328
+        },
+        {
+          "fraction_randomized": 0.75,
+          "rank_corr_mean": 0.14304308199780627,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.2894417335028081
+        },
+        {
+          "fraction_randomized": 1.0,
+          "rank_corr_mean": 0.43808956310149577,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.40898979367165006
+        }
+      ],
+      "threshold_rank_corr": 0.3,
+      "passes": false,
+      "note": "Test qualitatif de Adebayo et al. (2018) ; ne d\u00e9montre pas la validit\u00e9 clinique des cartes.",
+      "seed": 2
+    },
+    {
+      "model_id": "densenet121",
+      "n_images": 16,
+      "rows": [
+        {
+          "fraction_randomized": 0.25,
+          "rank_corr_mean": 0.2434454233969681,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.3933029665141698
+        },
+        {
+          "fraction_randomized": 0.5,
+          "rank_corr_mean": -0.19229140756561247,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.2295201620130235
+        },
+        {
+          "fraction_randomized": 0.75,
+          "rank_corr_mean": -0.3235275377936169,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.12676580202424795
+        },
+        {
+          "fraction_randomized": 1.0,
+          "rank_corr_mean": -0.3180562917120635,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.15798473486877188
+        }
+      ],
+      "threshold_rank_corr": 0.3,
+      "passes": true,
+      "note": "Test qualitatif de Adebayo et al. (2018) ; ne d\u00e9montre pas la validit\u00e9 clinique des cartes.",
+      "seed": 3
+    },
+    {
+      "model_id": "densenet121",
+      "n_images": 16,
+      "rows": [
+        {
+          "fraction_randomized": 0.25,
+          "rank_corr_mean": 0.19744361549407363,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.5267663196754451
+        },
+        {
+          "fraction_randomized": 0.5,
+          "rank_corr_mean": 0.17743674633436812,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.4938952580511813
+        },
+        {
+          "fraction_randomized": 0.75,
+          "rank_corr_mean": 0.015941179260526836,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.48864950553725195
+        },
+        {
+          "fraction_randomized": 1.0,
+          "rank_corr_mean": 0.08996326599165419,
+          "n_valid_images": 11,
+          "n_excluded_base_constant": 5,
+          "n_randomized_constant": 0,
+          "ssim_mean": 0.5147389847852589
+        }
+      ],
+      "threshold_rank_corr": 0.3,
+      "passes": true,
+      "note": "Test qualitatif de Adebayo et al. (2018) ; ne d\u00e9montre pas la validit\u00e9 clinique des cartes.",
+      "seed": 4
+    }
+  ],
+  "passes_all_seeds": false
+}

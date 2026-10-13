@@ -15,18 +15,18 @@ Format inspiré de Mitchell et al. (2019). **Prototype de recherche, pas un disp
 
 | Modèle | Rôle | Particularités |
 |---|---|---|
-| resnet18 | Référence de la comparaison | Seul modèle avec analyses de robustesse et de sanité Grad-CAM |
-| simple_cnn | Base légère | Nettement moins bon que la référence (différence d'AUC établie) |
-| densenet121 | Candidat | Meilleure AUC moyenne ; avantage faible, voir ci-dessous |
-| efficientnet_b0 | Candidat | Pas de différence démontrée avec la référence |
+| resnet18 | Référence de la comparaison | Sanité Grad-CAM : 4 seeds sur 5 |
+| simple_cnn | Base légère | Nettement moins bon que la référence (différence d'AUC établie) ; sous rotation forte, la sensibilité chute |
+| densenet121 | Candidat | Meilleure AUC moyenne ; avantage faible ; sanité Grad-CAM : 4 seeds sur 5 |
+| efficientnet_b0 | Candidat | Pas de différence démontrée avec la référence ; sanité Grad-CAM : 5 seeds sur 5 ; AUC très dégradée par un flou fort |
 
 ## Résultats et nuances (valeurs : RESULTS.md)
 
 - Les AUC de resnet18, densenet121 et efficientnet_b0 sont proches ; seul simple_cnn est clairement en dessous.
 - densenet121 : le bootstrap apparié établit une petite différence d'AUC moyenne avec resnet18 (après correction de Holm), mais DeLong sur l'ensemble des 5 seeds ne la retrouve pas. Elle n'est pas présentée comme robuste.
 - Calibration : l'ECE reste de l'ordre de quelques centièmes ; le temperature scaling n'améliore pas systématiquement le test.
-- Robustesse (resnet18 uniquement) : l'AUC se dégrade peu pour des perturbations modérées, mais la spécificité aux seuils fixes s'effondre (bruit, flou, rotation, luminosité).
-- Explicabilité (resnet18 uniquement) : test de sanité de Adebayo et al. (2018) satisfait pour 4 seeds sur 5. Les cartes Grad-CAM sont indicatives et ne prouvent pas que le modèle regarde les bonnes structures.
+- Robustesse (4 modèles) : l'AUC se dégrade peu pour des perturbations modérées, mais les seuils fixes ne tiennent pas. Bruit et flou : la spécificité s'effondre (presque tout est déclaré positif). simple_cnn sous rotation de 30 degrés : la sensibilité chute (0,379 dans le rapport), c'est-à-dire que des pneumonies ne sont plus détectées. Bruit fort : AUC proche du hasard pour tous. efficientnet_b0 est le plus touché par un flou fort sur l'AUC.
+- Explicabilité : test de sanité d'Adebayo et al. (2018) satisfait pour toutes les seeds avec simple_cnn et efficientnet_b0, pas pour resnet18 (1 seed sur 5 échoue) ni densenet121 (1 seed sur 5 échoue ; seulement 11 images exploitables sur 16). Les cartes Grad-CAM sont indicatives et ne prouvent pas que le modèle regarde les bonnes structures.
 
 ## Limites et risques connus
 
@@ -34,7 +34,6 @@ Format inspiré de Mitchell et al. (2019). **Prototype de recherche, pas un disp
 - La prévalence diffère entre validation et test ; seuils et calibration en sont affectés.
 - 10 doublons confirmés entre entraînement et validation (aucun entre entraînement et test).
 - Résolution 224 issue de MedMNIST : ce n'est pas la résolution clinique.
-- Robustesse et sanité non réalisées pour simple_cnn, densenet121 et efficientnet_b0.
 - Les performances sont celles de ce jeu de test, pas une estimation de performance en conditions réelles.
 
 ## Éthique et données
