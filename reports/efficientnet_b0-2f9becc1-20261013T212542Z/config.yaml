@@ -1,0 +1,20 @@
+batch_size: 64
+dataset: pneumoniamnist
+device: auto
+epochs: 15
+lr: 0.0003
+model_id: efficientnet_b0
+n_bootstrap: 2000
+num_workers: 0
+patience: 4
+pretrained: true
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+sensitivity_target: 0.95
+size: 224
+train_subset: null
+weight_decay: 0.0001
