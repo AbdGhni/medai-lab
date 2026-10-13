@@ -1,0 +1,108 @@
+{
+  "analysis": "comparison",
+  "run_id": "resnet18-04e08eb9-20261012T184310Z",
+  "protocol_version": "1.2",
+  "disclaimer": "Prototype de recherche. Ne pas utiliser pour un diagnostic ou une d\u00e9cision clinique.",
+  "created_at": "2026-10-13T22:09:46Z",
+  "commit": "2664cbd786653cf2800ca0fdd06210b323bfe070",
+  "dirty": false,
+  "baseline": {
+    "model": "resnet18",
+    "run_id": "resnet18-04e08eb9-20261012T184310Z"
+  },
+  "n_boot": 2000,
+  "alpha": 0.05,
+  "n_comparisons": 3,
+  "n_seeds_baseline": 5,
+  "comparisons": [
+    {
+      "model": "simple_cnn",
+      "run_id": "simple_cnn-a7e858f0-20261013T093409Z",
+      "auc_model": 0.9481415735261889,
+      "auc_baseline": 0.9845529257067718,
+      "auc_diff_model_minus_baseline": -0.03641135218058289,
+      "ci95": [
+        -0.05213905325443789,
+        -0.02193619877273725
+      ],
+      "ci_adjusted": [
+        -0.055320768500255524,
+        -0.018915881364599322
+      ],
+      "p_bootstrap": 0.0009995002498750624,
+      "delong_on_seed_mean": {
+        "auc_diff": -0.04057637519175983,
+        "p": 1.2640681690652647e-07
+      },
+      "mcnemar_s1_on_seed_mean": {
+        "a_only_correct": 13,
+        "b_only_correct": 32,
+        "p": 0.006608822842281368
+      },
+      "p_holm": 0.0029985007496251873,
+      "established": true,
+      "wording": "diff\u00e9rence \u00e9tablie (apr\u00e8s correction de Holm)"
+    },
+    {
+      "model": "densenet121",
+      "run_id": "densenet121-49378193-20261013T100113Z",
+      "auc_model": 0.9916699539776463,
+      "auc_baseline": 0.9845529257067718,
+      "auc_diff_model_minus_baseline": 0.00711702827087457,
+      "ci95": [
+        0.002766874863028504,
+        0.011938088976550569
+      ],
+      "ci_adjusted": [
+        0.0015323617503104263,
+        0.013243534955073478
+      ],
+      "p_bootstrap": 0.001999000499750125,
+      "delong_on_seed_mean": {
+        "auc_diff": 0.002509314047775546,
+        "p": 0.2541988530441167
+      },
+      "mcnemar_s1_on_seed_mean": {
+        "a_only_correct": 18,
+        "b_only_correct": 0,
+        "p": 7.62939453125e-06
+      },
+      "p_holm": 0.00399800099950025,
+      "established": true,
+      "wording": "diff\u00e9rence \u00e9tablie (apr\u00e8s correction de Holm)"
+    },
+    {
+      "model": "efficientnet_b0",
+      "run_id": "efficientnet_b0-2f9becc1-20261013T212542Z",
+      "auc_model": 0.9850054788516326,
+      "auc_baseline": 0.9845529257067718,
+      "auc_diff_model_minus_baseline": 0.0004525531448608122,
+      "ci95": [
+        -0.004491809116809178,
+        0.004763423186500118
+      ],
+      "ci_adjusted": [
+        -0.0057444663598509044,
+        0.005745562130177382
+      ],
+      "p_bootstrap": 0.8395802098950524,
+      "delong_on_seed_mean": {
+        "auc_diff": 0.0006191102344949018,
+        "p": 0.7100417540140294
+      },
+      "mcnemar_s1_on_seed_mean": {
+        "a_only_correct": 15,
+        "b_only_correct": 3,
+        "p": 0.007537841796875
+      },
+      "p_holm": 0.8395802098950524,
+      "established": false,
+      "wording": "pas de diff\u00e9rence d\u00e9montr\u00e9e"
+    }
+  ],
+  "notes": [
+    "Diff\u00e9rence d'AUC moyenne sur les seeds ; m\u00eames images de test r\u00e9\u00e9chantillonn\u00e9es pour les deux mod\u00e8les.",
+    "DeLong et McNemar portent sur les probabilit\u00e9s moyenn\u00e9es sur les seeds (ensemble) ; McNemar au seuil S1 moyen.",
+    "Une p-valeur seule ne suffit pas : lire la diff\u00e9rence et son intervalle."
+  ]
+}
