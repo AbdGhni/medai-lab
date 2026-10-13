@@ -1,0 +1,953 @@
+{
+  "analysis": "robustness",
+  "run_id": "resnet18-04e08eb9-20261012T184310Z",
+  "protocol_version": "1.2",
+  "disclaimer": "Prototype de recherche. Ne pas utiliser pour un diagnostic ou une d\u00e9cision clinique.",
+  "created_at": "2026-10-13T10:15:59Z",
+  "commit": "aae9455475bfa18e935b6ed913658a0976fb0824",
+  "dirty": false,
+  "n_boot": 500,
+  "clean": {
+    "auc": {
+      "mean": 0.9845518299364453,
+      "ci_low": 0.9759264190225728,
+      "ci_high": 0.990646614069691
+    },
+    "S1_youden/sensitivity": {
+      "mean": 0.9969230769230769,
+      "ci_low": 0.9928205128205129,
+      "ci_high": 0.9994871794871795
+    },
+    "S1_youden/specificity": {
+      "mean": 0.8145299145299145,
+      "ci_low": 0.7713461538461538,
+      "ci_high": 0.8538461538461538
+    },
+    "S2_sens95/sensitivity": {
+      "mean": 0.9820512820512821,
+      "ci_low": 0.9705,
+      "ci_high": 0.9912820512820513
+    },
+    "S2_sens95/specificity": {
+      "mean": 0.8931623931623932,
+      "ci_low": 0.858525641025641,
+      "ci_high": 0.9230769230769231
+    }
+  },
+  "perturbations": {
+    "gaussian_noise": [
+      {
+        "level": 0.02,
+        "metrics": {
+          "auc": {
+            "mean": 0.9827722989261451,
+            "ci_low": 0.9738714113521806,
+            "ci_high": 0.9895134231865003
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9994871794871795,
+            "ci_low": 0.9984615384615385,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.5623931623931624,
+            "ci_low": 0.5106623931623931,
+            "ci_high": 0.6124145299145299
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9984615384615385,
+            "ci_low": 0.9953846153846154,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.7487179487179487,
+            "ci_low": 0.6957264957264957,
+            "ci_high": 0.7923076923076924
+          }
+        }
+      },
+      {
+        "level": 0.05,
+        "metrics": {
+          "auc": {
+            "mean": 0.9662447950909488,
+            "ci_low": 0.9515326813499891,
+            "ci_high": 0.977127657243042
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.13675213675213674,
+            "ci_low": 0.10980769230769231,
+            "ci_high": 0.16495726495726498
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.3162393162393163,
+            "ci_low": 0.2717521367521368,
+            "ci_high": 0.3572649572649573
+          }
+        }
+      },
+      {
+        "level": 0.1,
+        "metrics": {
+          "auc": {
+            "mean": 0.8792570677186061,
+            "ci_low": 0.8547196471619549,
+            "ci_high": 0.9016669132149902
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.0017094017094017096,
+            "ci_low": 0.0,
+            "ci_high": 0.004273504273504274
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.017948717948717947,
+            "ci_low": 0.009401709401709401,
+            "ci_high": 0.027350427350427354
+          }
+        }
+      },
+      {
+        "level": 0.2,
+        "metrics": {
+          "auc": {
+            "mean": 0.7031470523778216,
+            "ci_low": 0.6757049364453211,
+            "ci_high": 0.7290674172693403
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0
+          }
+        }
+      },
+      {
+        "level": 0.3,
+        "metrics": {
+          "auc": {
+            "mean": 0.6012842428227043,
+            "ci_low": 0.5790843469208854,
+            "ci_high": 0.6216731591058515
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0
+          }
+        }
+      }
+    ],
+    "gaussian_blur": [
+      {
+        "level": 0.5,
+        "metrics": {
+          "auc": {
+            "mean": 0.9841442033749725,
+            "ci_low": 0.9750864562787639,
+            "ci_high": 0.9904281722550954
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.997948717948718,
+            "ci_low": 0.9943589743589744,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7726495726495728,
+            "ci_low": 0.7269017094017094,
+            "ci_high": 0.81241452991453
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9897435897435898,
+            "ci_low": 0.9817820512820513,
+            "ci_high": 0.995897435897436
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.8743589743589745,
+            "ci_low": 0.8393162393162393,
+            "ci_high": 0.9072863247863248
+          }
+        }
+      },
+      {
+        "level": 1.0,
+        "metrics": {
+          "auc": {
+            "mean": 0.9818803418803419,
+            "ci_low": 0.9717649024764409,
+            "ci_high": 0.9892680802103879
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.5897435897435896,
+            "ci_low": 0.5397222222222223,
+            "ci_high": 0.6380555555555556
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9953846153846154,
+            "ci_low": 0.9902564102564103,
+            "ci_high": 0.9989743589743589
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.7726495726495727,
+            "ci_low": 0.7277564102564101,
+            "ci_high": 0.811559829059829
+          }
+        }
+      },
+      {
+        "level": 1.5,
+        "metrics": {
+          "auc": {
+            "mean": 0.977475345167653,
+            "ci_low": 0.9660613357440281,
+            "ci_high": 0.9855361330265175
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.3769230769230769,
+            "ci_low": 0.33247863247863246,
+            "ci_high": 0.4218589743589743
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.6008547008547008,
+            "ci_low": 0.5512820512820513,
+            "ci_high": 0.6440384615384616
+          }
+        }
+      },
+      {
+        "level": 2.0,
+        "metrics": {
+          "auc": {
+            "mean": 0.9713006793776024,
+            "ci_low": 0.9588194718387026,
+            "ci_high": 0.9806466962524656
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.2076923076923077,
+            "ci_low": 0.1773290598290598,
+            "ci_high": 0.23976495726495728
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.41111111111111115,
+            "ci_low": 0.36581196581196584,
+            "ci_high": 0.453034188034188
+          }
+        }
+      },
+      {
+        "level": 3.0,
+        "metrics": {
+          "auc": {
+            "mean": 0.9471893491124261,
+            "ci_low": 0.9310783201840894,
+            "ci_high": 0.9600283530571992
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.03760683760683761,
+            "ci_low": 0.026495726495726495,
+            "ci_high": 0.050876068376068354
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.14273504273504273,
+            "ci_low": 0.11835470085470086,
+            "ci_high": 0.16581196581196583
+          }
+        }
+      }
+    ],
+    "brightness": [
+      {
+        "level": 0.6,
+        "metrics": {
+          "auc": {
+            "mean": 0.9743096646942802,
+            "ci_low": 0.9633839305281612,
+            "ci_high": 0.9830134505807584
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.33076923076923076,
+            "ci_low": 0.2875854700854701,
+            "ci_high": 0.36927350427350425
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9994871794871795,
+            "ci_low": 0.9984615384615385,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.5470085470085471,
+            "ci_low": 0.5007692307692307,
+            "ci_high": 0.588482905982906
+          }
+        }
+      },
+      {
+        "level": 0.8,
+        "metrics": {
+          "auc": {
+            "mean": 0.9849660311198771,
+            "ci_low": 0.9778017203594126,
+            "ci_high": 0.9910072320841552
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9974358974358974,
+            "ci_low": 0.9938461538461538,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7179487179487181,
+            "ci_low": 0.6696367521367521,
+            "ci_high": 0.7615384615384615
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9912820512820513,
+            "ci_low": 0.9835897435897436,
+            "ci_high": 0.9974358974358974
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.8512820512820513,
+            "ci_low": 0.8098076923076923,
+            "ci_high": 0.8863247863247864
+          }
+        }
+      },
+      {
+        "level": 1.2,
+        "metrics": {
+          "auc": {
+            "mean": 0.9823646723646723,
+            "ci_low": 0.9728844510190664,
+            "ci_high": 0.989287530133684
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9943589743589744,
+            "ci_low": 0.9887179487179487,
+            "ci_high": 0.9984615384615385
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7991452991452992,
+            "ci_low": 0.7555555555555555,
+            "ci_high": 0.8354914529914529
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9733333333333334,
+            "ci_low": 0.9597307692307693,
+            "ci_high": 0.9841025641025641
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.8948717948717949,
+            "ci_low": 0.8580769230769232,
+            "ci_high": 0.9264957264957264
+          }
+        }
+      },
+      {
+        "level": 1.4,
+        "metrics": {
+          "auc": {
+            "mean": 0.9662217839140915,
+            "ci_low": 0.9533634670173132,
+            "ci_high": 0.9774163379355687
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9938461538461538,
+            "ci_low": 0.9892307692307692,
+            "ci_high": 0.9974358974358974
+          },
+          "S1_youden/specificity": {
+            "mean": 0.605982905982906,
+            "ci_low": 0.5568162393162394,
+            "ci_high": 0.6569017094017093
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9712820512820514,
+            "ci_low": 0.9592179487179486,
+            "ci_high": 0.9812948717948718
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.7769230769230768,
+            "ci_low": 0.735042735042735,
+            "ci_high": 0.8162393162393162
+          }
+        }
+      },
+      {
+        "level": 1.6,
+        "metrics": {
+          "auc": {
+            "mean": 0.9408700416392722,
+            "ci_low": 0.9235630615822924,
+            "ci_high": 0.9552136752136752
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9943589743589744,
+            "ci_low": 0.9897435897435898,
+            "ci_high": 0.997948717948718
+          },
+          "S1_youden/specificity": {
+            "mean": 0.4025641025641026,
+            "ci_low": 0.35596153846153844,
+            "ci_high": 0.4461965811965811
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9753846153846155,
+            "ci_low": 0.964102564102564,
+            "ci_high": 0.9846153846153847
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.5769230769230769,
+            "ci_low": 0.5273504273504274,
+            "ci_high": 0.6256837606837606
+          }
+        }
+      }
+    ],
+    "contrast": [
+      {
+        "level": 0.4,
+        "metrics": {
+          "auc": {
+            "mean": 0.9756508875739645,
+            "ci_low": 0.9645590072320842,
+            "ci_high": 0.9834797008547008
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.4444444444444445,
+            "ci_low": 0.39527777777777784,
+            "ci_high": 0.4914957264957264
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9953846153846154,
+            "ci_low": 0.9910128205128206,
+            "ci_high": 0.9987307692307692
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.647008547008547,
+            "ci_low": 0.5986965811965812,
+            "ci_high": 0.6897435897435897
+          }
+        }
+      },
+      {
+        "level": 0.6,
+        "metrics": {
+          "auc": {
+            "mean": 0.9844192417269341,
+            "ci_low": 0.9764151325882096,
+            "ci_high": 0.9907842154284462
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9974358974358974,
+            "ci_low": 0.9938461538461538,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.6854700854700855,
+            "ci_low": 0.6333333333333333,
+            "ci_high": 0.7333333333333334
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9892307692307692,
+            "ci_low": 0.9815384615384616,
+            "ci_high": 0.9953846153846154
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.8418803418803419,
+            "ci_low": 0.8038247863247864,
+            "ci_high": 0.8760683760683762
+          }
+        }
+      },
+      {
+        "level": 0.8,
+        "metrics": {
+          "auc": {
+            "mean": 0.9848082401928556,
+            "ci_low": 0.9768346482577253,
+            "ci_high": 0.9908809993425378
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9974358974358974,
+            "ci_low": 0.9938461538461538,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7743589743589743,
+            "ci_low": 0.7286111111111112,
+            "ci_high": 0.8145299145299145
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9856410256410257,
+            "ci_low": 0.9753846153846155,
+            "ci_high": 0.9938461538461538
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.882905982905983,
+            "ci_low": 0.8478205128205129,
+            "ci_high": 0.9128205128205129
+          }
+        }
+      },
+      {
+        "level": 1.2,
+        "metrics": {
+          "auc": {
+            "mean": 0.984492658338812,
+            "ci_low": 0.9756826649134341,
+            "ci_high": 0.9906262875301337
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.995897435897436,
+            "ci_low": 0.9907692307692308,
+            "ci_high": 0.9994871794871795
+          },
+          "S1_youden/specificity": {
+            "mean": 0.8282051282051281,
+            "ci_low": 0.7858333333333333,
+            "ci_high": 0.865405982905983
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9800000000000001,
+            "ci_low": 0.9671794871794872,
+            "ci_high": 0.9897435897435898
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.9008547008547009,
+            "ci_low": 0.8658119658119657,
+            "ci_high": 0.9312179487179487
+          }
+        }
+      },
+      {
+        "level": 1.5,
+        "metrics": {
+          "auc": {
+            "mean": 0.9835985097523559,
+            "ci_low": 0.9741593250054789,
+            "ci_high": 0.9900996603111988
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9953846153846154,
+            "ci_low": 0.9905,
+            "ci_high": 0.9989743589743589
+          },
+          "S1_youden/specificity": {
+            "mean": 0.823076923076923,
+            "ci_low": 0.7816025641025642,
+            "ci_high": 0.858568376068376
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9733333333333334,
+            "ci_low": 0.9584615384615385,
+            "ci_high": 0.9848846153846155
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.9051282051282051,
+            "ci_low": 0.8722008547008548,
+            "ci_high": 0.9346367521367521
+          }
+        }
+      }
+    ],
+    "jpeg": [
+      {
+        "level": 90,
+        "metrics": {
+          "auc": {
+            "mean": 0.9847359193513041,
+            "ci_low": 0.9759806048652203,
+            "ci_high": 0.9908550843743151
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.997948717948718,
+            "ci_low": 0.9943589743589744,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7905982905982907,
+            "ci_low": 0.7439529914529914,
+            "ci_high": 0.82991452991453
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9882051282051283,
+            "ci_low": 0.978974358974359,
+            "ci_high": 0.9953846153846154
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.882905982905983,
+            "ci_low": 0.847008547008547,
+            "ci_high": 0.9132692307692308
+          }
+        }
+      },
+      {
+        "level": 70,
+        "metrics": {
+          "auc": {
+            "mean": 0.9836905544597853,
+            "ci_low": 0.9737459456497918,
+            "ci_high": 0.9903030900723209
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.997948717948718,
+            "ci_low": 0.9943589743589744,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7418803418803419,
+            "ci_low": 0.6944230769230769,
+            "ci_high": 0.7833547008547008
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9917948717948718,
+            "ci_low": 0.9835897435897436,
+            "ci_high": 0.9974358974358974
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.8564102564102564,
+            "ci_low": 0.8188034188034189,
+            "ci_high": 0.8897435897435898
+          }
+        }
+      },
+      {
+        "level": 50,
+        "metrics": {
+          "auc": {
+            "mean": 0.9834615384615384,
+            "ci_low": 0.9737017313171159,
+            "ci_high": 0.9901189732632041
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9984615384615385,
+            "ci_low": 0.9953846153846154,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7068376068376068,
+            "ci_low": 0.6572649572649573,
+            "ci_high": 0.7508760683760684
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9948717948717949,
+            "ci_low": 0.9892307692307692,
+            "ci_high": 0.9989743589743589
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.841025641025641,
+            "ci_low": 0.8016666666666667,
+            "ci_high": 0.877371794871795
+          }
+        }
+      },
+      {
+        "level": 30,
+        "metrics": {
+          "auc": {
+            "mean": 0.9821959237343852,
+            "ci_low": 0.9714386916502301,
+            "ci_high": 0.9894803857111549
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9989743589743589,
+            "ci_low": 0.9969230769230769,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.6393162393162393,
+            "ci_low": 0.5892948717948717,
+            "ci_high": 0.6842094017094017
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.995897435897436,
+            "ci_low": 0.991525641025641,
+            "ci_high": 0.9994871794871795
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.7905982905982906,
+            "ci_low": 0.7487179487179487,
+            "ci_high": 0.8282051282051281
+          }
+        }
+      },
+      {
+        "level": 10,
+        "metrics": {
+          "auc": {
+            "mean": 0.9708294981371903,
+            "ci_low": 0.9577296460661845,
+            "ci_high": 0.9810432007451239
+          },
+          "S1_youden/sensitivity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.30256410256410254,
+            "ci_low": 0.25897435897435894,
+            "ci_high": 0.3406196581196581
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9984615384615385,
+            "ci_low": 0.9953846153846154,
+            "ci_high": 1.0
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.523931623931624,
+            "ci_low": 0.4735042735042735,
+            "ci_high": 0.5701282051282052
+          }
+        }
+      }
+    ],
+    "rotation": [
+      {
+        "level": 5,
+        "metrics": {
+          "auc": {
+            "mean": 0.9843261012491782,
+            "ci_low": 0.9757404120096428,
+            "ci_high": 0.9906424501424501
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9969230769230769,
+            "ci_low": 0.9923076923076923,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7461538461538462,
+            "ci_low": 0.7025641025641025,
+            "ci_high": 0.788076923076923
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9882051282051283,
+            "ci_low": 0.9792179487179488,
+            "ci_high": 0.9948717948717949
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.8623931623931625,
+            "ci_low": 0.8264957264957264,
+            "ci_high": 0.8961752136752137
+          }
+        }
+      },
+      {
+        "level": 10,
+        "metrics": {
+          "auc": {
+            "mean": 0.9827810650887574,
+            "ci_low": 0.9733168967784352,
+            "ci_high": 0.9896200964277887
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.995897435897436,
+            "ci_low": 0.9897435897435898,
+            "ci_high": 0.9994871794871795
+          },
+          "S1_youden/specificity": {
+            "mean": 0.7145299145299144,
+            "ci_low": 0.6687820512820514,
+            "ci_high": 0.7581196581196581
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9866666666666667,
+            "ci_low": 0.9774358974358975,
+            "ci_high": 0.9933333333333334
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.8547008547008547,
+            "ci_low": 0.8183547008547009,
+            "ci_high": 0.8872222222222222
+          }
+        }
+      },
+      {
+        "level": 15,
+        "metrics": {
+          "auc": {
+            "mean": 0.9817313171159325,
+            "ci_low": 0.9726929651545037,
+            "ci_high": 0.9885930856892395
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9969230769230769,
+            "ci_low": 0.9912820512820513,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.6153846153846154,
+            "ci_low": 0.564508547008547,
+            "ci_high": 0.6619871794871794
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9892307692307692,
+            "ci_low": 0.9805128205128206,
+            "ci_high": 0.9953846153846154
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.8128205128205128,
+            "ci_low": 0.7722008547008546,
+            "ci_high": 0.8508760683760683
+          }
+        }
+      },
+      {
+        "level": 20,
+        "metrics": {
+          "auc": {
+            "mean": 0.9752794214332676,
+            "ci_low": 0.9647146066184528,
+            "ci_high": 0.9832819417050186
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9974358974358974,
+            "ci_low": 0.9928205128205129,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.4435897435897435,
+            "ci_low": 0.394017094017094,
+            "ci_high": 0.49279914529914526
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.9943589743589744,
+            "ci_low": 0.9882051282051283,
+            "ci_high": 0.9989743589743589
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.6760683760683761,
+            "ci_low": 0.6307264957264958,
+            "ci_high": 0.717542735042735
+          }
+        }
+      },
+      {
+        "level": 30,
+        "metrics": {
+          "auc": {
+            "mean": 0.9620973044049966,
+            "ci_low": 0.9487227153188692,
+            "ci_high": 0.9722166885820732
+          },
+          "S1_youden/sensitivity": {
+            "mean": 0.9989743589743589,
+            "ci_low": 0.9969230769230769,
+            "ci_high": 1.0
+          },
+          "S1_youden/specificity": {
+            "mean": 0.1341880341880342,
+            "ci_low": 0.10854700854700855,
+            "ci_high": 0.1654059829059829
+          },
+          "S2_sens95/sensitivity": {
+            "mean": 0.995897435897436,
+            "ci_low": 0.9907692307692308,
+            "ci_high": 0.9994871794871795
+          },
+          "S2_sens95/specificity": {
+            "mean": 0.35470085470085466,
+            "ci_low": 0.3136324786324787,
+            "ci_high": 0.39873931623931624
+          }
+        }
+      }
+    ]
+  },
+  "thresholds_note": "Seuils S1/S2 fix\u00e9s sur la validation, non recalcul\u00e9s sous perturbation.",
+  "n_seeds": 5
+}
