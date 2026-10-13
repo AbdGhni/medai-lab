@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { IntervalBar } from "@/components/IntervalBar";
-import { type EvaluationSummary, serverGet, serverReachable } from "@/lib/api";
+import { type EvaluationSummary, dynamicUnlessStatic, serverGet, serverReachable } from "@/lib/api";
 import { dateFr, interval, shortCommit } from "@/lib/format";
-
-export const dynamic = "force-dynamic";
 
 function Row({ e }: { e: EvaluationSummary }) {
   return (
@@ -51,6 +49,7 @@ function Table({ rows }: { rows: EvaluationSummary[] }) {
 }
 
 export default async function Home() {
+  await dynamicUnlessStatic();
   const reachable = await serverReachable();
   const data = reachable ? await serverGet<{ items: EvaluationSummary[] }>("/evaluations") : null;
   const items = data?.items ?? [];

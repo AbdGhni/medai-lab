@@ -50,6 +50,8 @@ docker compose up --build
 Test de fumée sans GPU (petite résolution, résultats sans valeur scientifique) :
 `uv run python -m medai_ml run --config ml/configs/smoke_simple_cnn_28.yaml`
 
+Version statique (rapports précalculés, sans inférence) : `NEXT_PUBLIC_STATIC_EXPORT=1 pnpm build` dans `apps/web` avec l'API locale démarrée produit `apps/web/out`. Le workflow manuel `.github/workflows/pages.yml` la publie sur GitHub Pages une fois la source Pages réglée sur « GitHub Actions ».
+
 ## Structure
 
 ```

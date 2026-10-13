@@ -44,7 +44,7 @@ Statut au 14/10/2026 : A01 à A05 terminés avec de vrais rapports (4 modèles x
 
 | ID | Priorité | Élément | Critères d'acceptation | Est. |
 |---|---|---|---|---|
-| D01 | Must | Version statique du tableau de bord (rapports précalculés) | Hébergée gratuitement ; mention de recherche visible | 1 |
+| D01 | Must | Version statique du tableau de bord (rapports précalculés) | Hébergée gratuitement ; mention de recherche visible. Statut : export statique et workflow Pages manuel livrés ; publication non activée | 1 |
 | D02 | Should | Backend d'inférence hébergé (Cloud Run) avec plafond de coût | Alerte budgétaire à 5 EUR active avant mise en ligne ; démarrage à froid documenté | 1 |
 | D03 | Must | README professionnel avec captures et résultats issus des rapports | Chaque chiffre renvoie à un rapport | 1 |
 | D04 | Must | Étude de cas pour recruteurs (CASE_STUDY.md) | Problème, démarche, résultats, limites, apprentissages | 1 |

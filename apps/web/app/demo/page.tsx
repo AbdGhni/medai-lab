@@ -1,3 +1,4 @@
+import { STATIC_EXPORT } from "@/lib/api";
 import { DemoClient } from "./DemoClient";
 
 export const metadata = { title: "Essayer sur des images d'exemple | MedAI Lab" };
@@ -13,7 +14,15 @@ export default function DemoPage() {
           médical.
         </p>
       </section>
-      <DemoClient />
+      {STATIC_EXPORT ? (
+        <p className="max-w-[68ch]">
+          Cette version publique est statique : elle affiche des rapports précalculés et n&apos;héberge pas de modèle
+          d&apos;inférence. Pour essayer les prédictions et les cartes Grad-CAM, lancez la pile complète en local
+          (voir le README).
+        </p>
+      ) : (
+        <DemoClient />
+      )}
     </div>
   );
 }

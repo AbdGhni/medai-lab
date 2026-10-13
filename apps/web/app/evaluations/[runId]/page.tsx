@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { IntervalBar } from "@/components/IntervalBar";
-import { type EvaluationDetail, type MetricSummary, serverGet } from "@/lib/api";
+import { type EvaluationDetail, type MetricSummary, STATIC_EXPORT, dynamicUnlessStatic, serverGet } from "@/lib/api";
 import { dateFr, interval, num, shortCommit } from "@/lib/format";
-
-export const dynamic = "force-dynamic";
 
 const OPS: Record<string, string> = {
   S1_youden: "Seuil S1 : maximise sensibilité + spécificité sur la validation",
@@ -56,6 +54,7 @@ function Table({ caption, axis, children }: { caption: string; axis: string; chi
 }
 
 export default async function EvaluationPage({ params }: { params: Promise<{ runId: string }> }) {
+  await dynamicUnlessStatic();
   const { runId } = await params;
   const data = await serverGet<EvaluationDetail>(`/evaluations/${encodeURIComponent(runId)}`);
   if (!data) notFound();
@@ -198,4 +197,10 @@ export default async function EvaluationPage({ params }: { params: Promise<{ run
       </section>
     </div>
   );
+}
+
+export async function generateStaticParams(): Promise<{ runId: string }[]> {
+  if (!STATIC_EXPORT) return [];
+  const data = await serverGet<{ items: { run_id: string }[] }>("/evaluations");
+  return (data?.items ?? []).map((e) => ({ runId: e.run_id }));
 }

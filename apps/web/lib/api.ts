@@ -83,6 +83,18 @@ export interface Gallery {
 
 const SERVER_BASE = process.env.API_URL ?? "http://localhost:8000";
 
+/** Export statique (D01) : pages générées au build à partir de l'API locale, sans backend d'inférence. */
+export const STATIC_EXPORT = process.env.NEXT_PUBLIC_STATIC_EXPORT === "1";
+const FETCH_CACHE: RequestCache = STATIC_EXPORT ? "force-cache" : "no-store";
+
+/** Rend la page dynamique hors export statique (les rapports sont lus à chaque requête). */
+export async function dynamicUnlessStatic(): Promise<void> {
+  if (!STATIC_EXPORT) {
+    const { connection } = await import("next/server");
+    await connection();
+  }
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -95,7 +107,7 @@ export class ApiError extends Error {
 /** Appel côté serveur. Renvoie null si le service est injoignable (la page l'explique). */
 export async function serverGet<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(`${SERVER_BASE}${path}`, { cache: "no-store" });
+    const res = await fetch(`${SERVER_BASE}${path}`, { cache: FETCH_CACHE });
     if (res.status === 404) return null;
     if (!res.ok) throw new ApiError(`API ${res.status}`, res.status);
     return (await res.json()) as T;
@@ -107,7 +119,7 @@ export async function serverGet<T>(path: string): Promise<T | null> {
 
 export async function serverReachable(): Promise<boolean> {
   try {
-    const res = await fetch(`${SERVER_BASE}/health`, { cache: "no-store" });
+    const res = await fetch(`${SERVER_BASE}/health`, { cache: FETCH_CACHE });
     return res.ok;
   } catch {
     return false;

@@ -1,0 +1,58 @@
+name: Tableau de bord statique
+
+# Déclenchement manuel : publie les rapports précalculés (aucun modèle d'inférence hébergé).
+# Prérequis : Settings > Pages > Source = GitHub Actions.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: apps/web/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - run: uv sync --frozen
+      - name: Démarrer l'API locale sur les rapports versionnés
+        run: |
+          nohup uv run uvicorn app.main:app --app-dir services/api --port 8000 > api.log 2>&1 &
+          for i in $(seq 1 40); do curl -sf http://127.0.0.1:8000/health && break; sleep 2; done
+      - name: Construire l'export statique
+        working-directory: apps/web
+        env:
+          NEXT_PUBLIC_STATIC_EXPORT: "1"
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          API_URL: http://127.0.0.1:8000
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

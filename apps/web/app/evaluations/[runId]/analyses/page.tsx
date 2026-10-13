@@ -9,11 +9,9 @@ import {
   type EvaluationDetail,
   type RobustnessAnalysis,
   type SanityAnalysis,
-  serverGet,
+  STATIC_EXPORT, dynamicUnlessStatic, serverGet,
 } from "@/lib/api";
 import { interval, num } from "@/lib/format";
-
-export const dynamic = "force-dynamic";
 
 const PERTURBATIONS: Record<string, { label: string; unit: string }> = {
   gaussian_noise: { label: "Bruit gaussien", unit: "écart-type" },
@@ -52,6 +50,7 @@ function cell(c: Ci | undefined) {
 }
 
 export default async function AnalysesPage({ params }: { params: Promise<{ runId: string }> }) {
+  await dynamicUnlessStatic();
   const { runId } = await params;
   const base = `/evaluations/${encodeURIComponent(runId)}`;
   const detail = await serverGet<EvaluationDetail>(base);
@@ -287,4 +286,10 @@ export default async function AnalysesPage({ params }: { params: Promise<{ runId
       </section>
     </div>
   );
+}
+
+export async function generateStaticParams(): Promise<{ runId: string }[]> {
+  if (!STATIC_EXPORT) return [];
+  const data = await serverGet<{ items: { run_id: string }[] }>("/evaluations");
+  return (data?.items ?? []).map((e) => ({ runId: e.run_id }));
 }
