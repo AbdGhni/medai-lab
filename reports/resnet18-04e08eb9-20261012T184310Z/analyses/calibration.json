@@ -1,0 +1,212 @@
+{
+  "analysis": "calibration",
+  "run_id": "resnet18-04e08eb9-20261012T184310Z",
+  "protocol_version": "1.2",
+  "disclaimer": "Prototype de recherche. Ne pas utiliser pour un diagnostic ou une d\u00e9cision clinique.",
+  "created_at": "2026-10-13T22:10:13Z",
+  "commit": "684a08e3235fb97612d4594a679f57cdd7b611cf",
+  "dirty": false,
+  "per_seed": [
+    {
+      "seed": 0,
+      "temperature": 1.2151251051345926,
+      "temperature_at_bound": false,
+      "ece10_before": 0.028601076661514898,
+      "ece10_after": 0.026732854588579456,
+      "ece_adaptive_before": 0.028074876168604206,
+      "ece_adaptive_after": 0.026166570805518184,
+      "brier_before": 0.032516034580420086,
+      "brier_after": 0.03178225097754591,
+      "nll_before": 0.1261212632839863,
+      "nll_after": 0.11627028710486882
+    },
+    {
+      "seed": 1,
+      "temperature": 0.6310222580051026,
+      "temperature_at_bound": false,
+      "ece10_before": 0.10461356068124854,
+      "ece10_after": 0.10551820785144116,
+      "ece_adaptive_before": 0.10461356068124857,
+      "ece_adaptive_after": 0.1055182078514411,
+      "brier_before": 0.08579001675953045,
+      "brier_after": 0.09102487926224988,
+      "nll_before": 0.3495063929188602,
+      "nll_after": 0.5025583520700297
+    },
+    {
+      "seed": 2,
+      "temperature": 1.1973720835072574,
+      "temperature_at_bound": false,
+      "ece10_before": 0.025923041479524206,
+      "ece10_after": 0.02657524065394951,
+      "ece_adaptive_before": 0.016269665552760864,
+      "ece_adaptive_after": 0.013633902664124085,
+      "brier_before": 0.036999962241295155,
+      "brier_after": 0.03664428101120537,
+      "nll_before": 0.13361948288765413,
+      "nll_after": 0.1291082942113801
+    },
+    {
+      "seed": 3,
+      "temperature": 1.3576085748266178,
+      "temperature_at_bound": false,
+      "ece10_before": 0.02625693076947425,
+      "ece10_after": 0.018414031617656132,
+      "ece_adaptive_before": 0.024868510094751224,
+      "ece_adaptive_after": 0.018799835147155015,
+      "brier_before": 0.03978428700475101,
+      "brier_after": 0.03883076880421331,
+      "nll_before": 0.1435192919584425,
+      "nll_after": 0.13552138550174592
+    },
+    {
+      "seed": 4,
+      "temperature": 0.9853454925762841,
+      "temperature_at_bound": false,
+      "ece10_before": 0.07050224876181355,
+      "ece10_after": 0.07046456807670856,
+      "ece_adaptive_before": 0.07065298699804523,
+      "ece_adaptive_after": 0.07059786540898398,
+      "brier_before": 0.059298084214145584,
+      "brier_after": 0.059419031255278525,
+      "nll_before": 0.24621703423885238,
+      "nll_after": 0.24890156910351033
+    }
+  ],
+  "mean_over_seeds": {
+    "temperature": 1.0772947028099709,
+    "ece10_before": 0.05117937167071509,
+    "ece10_after": 0.049540980557666967,
+    "ece_adaptive_before": 0.04889591989908201,
+    "ece_adaptive_after": 0.04694327637544447,
+    "brier_before": 0.05087767696002845,
+    "brier_after": 0.0515402422620986,
+    "nll_before": 0.19979669305755912,
+    "nll_after": 0.22647197759830698
+  },
+  "reliability_before_seed0": [
+    {
+      "bin": 0,
+      "n": 200,
+      "mean_prob": 0.007808729284029256,
+      "observed_freq": 0.01
+    },
+    {
+      "bin": 1,
+      "n": 3,
+      "mean_prob": 0.1761180212100347,
+      "observed_freq": 0.0
+    },
+    {
+      "bin": 2,
+      "n": 5,
+      "mean_prob": 0.2384154677391052,
+      "observed_freq": 0.2
+    },
+    {
+      "bin": 3,
+      "n": 6,
+      "mean_prob": 0.33777473866939545,
+      "observed_freq": 0.0
+    },
+    {
+      "bin": 4,
+      "n": 3,
+      "mean_prob": 0.4320444663365682,
+      "observed_freq": 0.3333333333333333
+    },
+    {
+      "bin": 5,
+      "n": 2,
+      "mean_prob": 0.5782184898853302,
+      "observed_freq": 0.0
+    },
+    {
+      "bin": 6,
+      "n": 3,
+      "mean_prob": 0.6330392559369405,
+      "observed_freq": 0.3333333333333333
+    },
+    {
+      "bin": 7,
+      "n": 6,
+      "mean_prob": 0.7491815984249115,
+      "observed_freq": 0.5
+    },
+    {
+      "bin": 8,
+      "n": 4,
+      "mean_prob": 0.8340336978435516,
+      "observed_freq": 0.5
+    },
+    {
+      "bin": 9,
+      "n": 392,
+      "mean_prob": 0.9935684319661588,
+      "observed_freq": 0.9693877551020408
+    }
+  ],
+  "reliability_after_seed0": [
+    {
+      "bin": 0,
+      "n": 195,
+      "mean_prob": 0.01109048608820786,
+      "observed_freq": 0.005128205128205128
+    },
+    {
+      "bin": 1,
+      "n": 5,
+      "mean_prob": 0.12445694623726467,
+      "observed_freq": 0.2
+    },
+    {
+      "bin": 2,
+      "n": 7,
+      "mean_prob": 0.24872892062199872,
+      "observed_freq": 0.14285714285714285
+    },
+    {
+      "bin": 3,
+      "n": 7,
+      "mean_prob": 0.3561843309709638,
+      "observed_freq": 0.0
+    },
+    {
+      "bin": 4,
+      "n": 3,
+      "mean_prob": 0.44395998258111957,
+      "observed_freq": 0.3333333333333333
+    },
+    {
+      "bin": 5,
+      "n": 3,
+      "mean_prob": 0.572723900896888,
+      "observed_freq": 0.0
+    },
+    {
+      "bin": 6,
+      "n": 5,
+      "mean_prob": 0.6593228445226053,
+      "observed_freq": 0.6
+    },
+    {
+      "bin": 7,
+      "n": 6,
+      "mean_prob": 0.7545723158107767,
+      "observed_freq": 0.3333333333333333
+    },
+    {
+      "bin": 8,
+      "n": 10,
+      "mean_prob": 0.8781045062202326,
+      "observed_freq": 0.6
+    },
+    {
+      "bin": 9,
+      "n": 383,
+      "mean_prob": 0.9902125420783149,
+      "observed_freq": 0.97911227154047
+    }
+  ],
+  "method": "temperature scaling ajust\u00e9 sur la validation de chaque seed"
+}

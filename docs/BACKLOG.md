@@ -19,11 +19,12 @@ Priorités MoSCoW. Estimation en jours de travail à temps partiel. Chaque élé
 | M11 | Must | Interface : vue d'ensemble, évaluation d'un modèle, limites et datasets | Aucune valeur affichée sans rapport (test e2e) ; bandeau de mise en garde permanent | 3 |
 | M12 | Must | Docker Compose (api + web) | docker compose up fonctionne depuis un clone propre | 1 |
 | M13 | Must | Entraînement du modèle de référence sur Colab et publication du premier rapport | Rapport réel, avec provenance et intervalles de confiance | 1 |
+
 | M14 | Must | Documentation : DATASETS.md, premier model card | Sources, licences et limites présentes | 0,5 |
 
 ## Phase 4 - Fonctionnalités avancées
 
-Statut au 12/10/2026 : le code, les tests et les configurations de A01 à A05 sont prêts et testés sur données synthétiques ; aucun résultat réel n'existe encore (A01 attend les exécutions Colab, A02 à A05 attendent les rapports et les poids). A07 : page d'analyses (comparaison, calibration, robustesse, sanité) livrée avec 4 tests e2e ; pas de pages dédiées par modèle. A06 n'est pas implémenté (téléchargement à valider). A08 à A11 ne sont pas commencés.
+Statut au 14/10/2026 : A01 à A05 terminés avec de vrais rapports (4 modèles x 5 seeds ; comparaison et calibration pour les 4 modèles ; robustesse et sanité Grad-CAM pour resnet18 uniquement, voir RESULTS.md). A07 : page d'analyses livrée avec 4 tests e2e. A06 non implémenté (téléchargement à valider). A08 à A11 non commencés.
 
 | ID | Priorité | Élément | Critères d'acceptation | Est. |
 |---|---|---|---|---|

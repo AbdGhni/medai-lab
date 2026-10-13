@@ -6,7 +6,18 @@ Prototype de recherche : plateforme d'évaluation reproductible de modèles d'IA
 
 ## État du projet
 
-Phase 3 (MVP) en cours. Le pipeline, l'API et l'interface fonctionnent et sont testés. **Aucun résultat de référence n'est encore publié** : le premier entraînement complet (ResNet-18, 5 seeds, 224x224) doit être lancé sur GPU (voir `notebooks/colab_train.ipynb`). Tant qu'aucun rapport n'existe, l'interface affiche « Aucune évaluation disponible » et ne montre aucun chiffre.
+Phases 1 à 4 réalisées : pipeline, API, interface, comparaison statistique, calibration, robustesse et test de sanité Grad-CAM sont implémentés, testés, et appliqués à de **vrais entraînements** (4 modèles x 5 seeds, PneumoniaMNIST 224x224, GPU T4). Les chiffres ci-dessous sont générés par `scripts/make_results.py` à partir des rapports versionnés ; le détail complet, avec leurs limites, est dans [docs/RESULTS.md](docs/RESULTS.md).
+
+<!-- RESULTS:START -->
+| Modèle | AUC [IC 95 %] | Sensibilité S1 | Spécificité S1 | Rapport |
+|---|---|---|---|---|
+| resnet18 | 0.985 [0.977 ; 0.991] | 0.997 | 0.815 | `resnet18-04e08eb9-20261012T184310Z` |
+| simple_cnn | 0.948 [0.930 ; 0.965] | 0.951 | 0.778 | `simple_cnn-a7e858f0-20261013T093409Z` |
+| densenet121 | 0.992 [0.984 ; 0.997] | 0.995 | 0.868 | `densenet121-49378193-20261013T100113Z` |
+| efficientnet_b0 | 0.985 [0.976 ; 0.993] | 0.995 | 0.823 | `efficientnet_b0-2f9becc1-20261013T212542Z` |
+<!-- RESULTS:END -->
+
+Moyenne de 5 seeds, jeu de test (624 images, un seul centre). Les intervalles ne couvrent que l'échantillonnage du test, pas un changement d'hôpital ou d'appareil. Limites principales : un seul jeu de données ; prévalence différente entre validation et test ; spécificité qui s'effondre aux seuils fixes sous perturbation (resnet18) ; test de sanité Grad-CAM non satisfait pour toutes les seeds ; décalage de domaine (ChestMNIST), robustesse et sanité des trois autres modèles non réalisés. Voir aussi [la fiche modèle](docs/MODEL_CARD.md) et [l'étude de cas](docs/CASE_STUDY.md).
 
 ## Principe
 
