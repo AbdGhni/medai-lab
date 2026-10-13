@@ -27,7 +27,12 @@ def _git(args: list[str], cwd: Path) -> str | None:
 def git_state(repo: Path | None = None) -> dict[str, Any]:
     cwd = repo or Path(__file__).resolve().parent
     commit = _git(["rev-parse", "HEAD"], cwd)
-    status = _git(["status", "--porcelain"], cwd)
+    # Les sorties (rapports, poids) ne sont pas du code : les ignorer évite qu'une analyse
+    # lancée après une autre soit marquée « dirty » à cause des fichiers de la précédente.
+    status = _git(
+        ["status", "--porcelain", "--", ":/", ":(top,exclude)reports", ":(top,exclude)artifacts"],
+        cwd,
+    )
     return {"commit": commit, "dirty": bool(status) if status is not None else None}
 
 
