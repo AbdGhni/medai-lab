@@ -17,7 +17,7 @@ Phases 1 à 4 réalisées : pipeline, API, interface, comparaison statistique, c
 | efficientnet_b0 | 0.985 [0.976 ; 0.993] | 0.995 | 0.823 | `efficientnet_b0-2f9becc1-20261013T212542Z` |
 <!-- RESULTS:END -->
 
-Moyenne de 5 seeds, jeu de test (624 images, un seul centre). Les intervalles ne couvrent que l'échantillonnage du test, pas un changement d'hôpital ou d'appareil. Limites principales : un seul jeu de données ; prévalence différente entre validation et test ; seuils fixes qui ne tiennent pas sous perturbation (spécificité ou sensibilité qui s'effondre selon le modèle) ; test de sanité Grad-CAM non satisfait pour toutes les seeds avec resnet18 et densenet121 ; décalage de domaine (ChestMNIST) non réalisé. Voir aussi [la fiche modèle](docs/MODEL_CARD.md) et [l'étude de cas](docs/CASE_STUDY.md).
+Moyenne de 5 seeds, jeu de test (624 images, un seul centre). Les intervalles ne couvrent que l'échantillonnage du test, pas un changement d'hôpital ou d'appareil. Limites principales : un seul jeu de données ; prévalence différente entre validation et test ; seuils fixes qui ne tiennent pas sous perturbation (spécificité ou sensibilité qui s'effondre selon le modèle) ; test de sanité Grad-CAM non satisfait pour toutes les seeds avec resnet18 et densenet121 ; décalage de domaine (ChestMNIST) exploratoire : l'AUC chute à 0,53-0,64 contre 0,95-0,99 en domaine, et les seuils fixes ne tiennent pas. Voir aussi [la fiche modèle](docs/MODEL_CARD.md) et [l'étude de cas](docs/CASE_STUDY.md).
 
 ## Principe
 

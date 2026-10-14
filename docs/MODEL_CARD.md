@@ -30,7 +30,7 @@ Format inspiré de Mitchell et al. (2019). **Prototype de recherche, pas un disp
 
 ## Limites et risques connus
 
-- Un seul centre, population pédiatrique : aucune garantie de généralisation. Le décalage de domaine (ChestMNIST) n'est pas évalué.
+- Un seul centre, population pédiatrique : aucune garantie de généralisation. Décalage de domaine (ChestMNIST, exploratoire et confondu) : l'AUC passe de 0,95-0,99 à 0,53-0,64 ; ne pas appliquer ces modèles hors de leur domaine d'entraînement.
 - La prévalence diffère entre validation et test ; seuils et calibration en sont affectés.
 - 10 doublons confirmés entre entraînement et validation (aucun entre entraînement et test).
 - Résolution 224 issue de MedMNIST : ce n'est pas la résolution clinique.

@@ -319,13 +319,73 @@ def build() -> str:
         )
         L.append("")
 
+    ds = {
+        m: _load(d / "analyses" / "domain_shift.json")
+        for m, d in runs.items()
+        if (d / "analyses" / "domain_shift.json").exists()
+    }
+    if ds:
+        first_ds = next(iter(ds.values()))
+        info = first_ds["dataset"]
+        L.append("## Décalage de domaine : ChestMNIST (exploratoire)")
+        L.append("")
+        L.append(
+            "Les modèles entraînés sur PneumoniaMNIST (radiographies pédiatriques, un centre) sont "
+            "appliqués sans modification au jeu de test de ChestMNIST (NIH ChestX-ray14, adultes, "
+            f"{first_ds['targets']['pneumonia_vs_all']['n_images']} images à {info['size']}x{info['size']}, "
+            f"licence {info['license']}). Seuils S1 et S2 fixés sur la validation de PneumoniaMNIST, "
+            "jamais réajustés. Procédure fixée à l'avance (EVAL_PROTOCOL.md, section 11). "
+            "Analyse exploratoire : le décalage mélange changement de population (enfants/adultes), "
+            "définition différente du label (labels NIH extraits automatiquement de comptes rendus, "
+            "bruités) et prévalence très différente. Aucune conclusion clinique."
+        )
+        L.append("")
+        for tname, title in (
+            ("pneumonia_vs_all", "Cible principale : pneumonie contre toutes les autres images"),
+            ("pneumonia_vs_no_finding", "Cible secondaire : pneumonie contre images sans anomalie"),
+        ):
+            t0 = first_ds["targets"][tname]
+            L.append(f"### {title}")
+            L.append("")
+            L.append(
+                f"{t0['n_images']} images, {t0['n_positive']} positives (prévalence "
+                f"{t0['prevalence'] * 100:.2f} %). Moyenne de 5 seeds, intervalle de bootstrap à 95 %."
+            )
+            L.append("")
+            L.append(
+                "| Modèle | AUC PneumoniaMNIST | AUC ChestMNIST | AUC-PR | Sens. S1 | Spéc. S1 | "
+                "Part signalée S1 | Sens. S2 | Spéc. S2 |"
+            )
+            L.append("|---|---|---|---|---|---|---|---|---|")
+            for m, r in ds.items():
+                x = r["targets"][tname]["metrics"]
+                ind = _load(runs[m] / "analyses" / "robustness.json")["clean"]["auc"]["mean"]
+                L.append(
+                    f"| {m} | {ind:.3f} | {_ci(x, 'auc')} | {x['auc_pr']['mean']:.3f} | "
+                    f"{x['S1_youden/sensitivity']['mean']:.2f} | {x['S1_youden/specificity']['mean']:.2f} | "
+                    f"{x['S1_youden/flagged_rate']['mean']:.2f} | "
+                    f"{x['S2_sens95/sensitivity']['mean']:.2f} | {x['S2_sens95/specificity']['mean']:.2f} |"
+                )
+            L.append("")
+        L.append(
+            "Lecture : l'AUC chute fortement par rapport à PneumoniaMNIST (de 0,95-0,99 à 0,53-0,64 "
+            "sur la cible principale ; simple_cnn proche du hasard). Aux seuils fixes, la sensibilité "
+            "est préservée en partie mais la spécificité s'effondre (la moitié ou plus des images sont "
+            "signalées), et l'AUC-PR reste très faible face à une prévalence d'environ 1 %. "
+            "Cette chute ne peut pas être attribuée à une seule cause : population, labels et "
+            "prévalence changent simultanément. Elle montre qu'un modèle entraîné sur un jeu étroit ne "
+            "se généralise pas tel quel, et elle ne dit rien de la performance de ces architectures "
+            "sur ce jeu si elles y étaient entraînées."
+        )
+        L.append("")
+
     L.append("## Ce que ces résultats ne montrent pas")
     L.append("")
     for t in (
         "Aucune validation clinique, aucune étude sur des patients en conditions réelles.",
         "Un seul jeu de données public (PneumoniaMNIST, radiographies pédiatriques d'un seul "
         "centre) : la généralisation à d'autres hôpitaux, appareils ou populations n'est pas "
-        "évaluée. Le décalage de domaine (ChestMNIST) n'est pas implémenté.",
+        "évaluée. Le décalage de domaine (ChestMNIST) est exploratoire et confondu (population, labels, prévalence).",
         "La prévalence diffère entre validation et test, ce qui affecte seuils et calibration.",
         "10 doublons confirmés entre entraînement et validation (aucun entre entraînement et test), voir DATASETS.md.",
         "Les comparaisons entre modèles ne valent que pour ce jeu de test et ces 5 seeds.",

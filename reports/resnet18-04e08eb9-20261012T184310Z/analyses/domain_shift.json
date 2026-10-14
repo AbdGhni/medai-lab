@@ -1,0 +1,155 @@
+{
+  "analysis": "domain_shift",
+  "run_id": "resnet18-04e08eb9-20261012T184310Z",
+  "protocol_version": "1.2",
+  "disclaimer": "Prototype de recherche. Ne pas utiliser pour un diagnostic ou une d\u00e9cision clinique.",
+  "created_at": "2026-10-14T08:23:40Z",
+  "commit": "33d90fb6e247497a63354ab94c3986bf995b9272",
+  "dirty": false,
+  "n_boot": 1000,
+  "n_seeds": 5,
+  "positive_label": "pneumonia",
+  "positive_label_index": 6,
+  "targets": {
+    "pneumonia_vs_all": {
+      "n_images": 22433,
+      "n_positive": 242,
+      "prevalence": 0.010787678865956404,
+      "metrics": {
+        "auc": {
+          "mean": 0.6267845537856722,
+          "ci_low": 0.5909619653526429,
+          "ci_high": 0.6620339438481314
+        },
+        "auc_pr": {
+          "mean": 0.01981857163844617,
+          "ci_low": 0.016486762758900667,
+          "ci_high": 0.026520248286797117
+        },
+        "S1_youden/sensitivity": {
+          "mean": 0.7661157024793389,
+          "ci_low": 0.7165289256198347,
+          "ci_high": 0.8115909090909091
+        },
+        "S1_youden/specificity": {
+          "mean": 0.38147897796403946,
+          "ci_low": 0.3761768284439637,
+          "ci_high": 0.386456896940201
+        },
+        "S1_youden/precision": {
+          "mean": 0.013387729947315654,
+          "ci_low": 0.012497836799239185,
+          "ci_high": 0.014179273386716937
+        },
+        "S1_youden/flagged_rate": {
+          "mean": 0.6201132260509071,
+          "ci_low": 0.6150831364507645,
+          "ci_high": 0.6254190255427273
+        },
+        "S2_sens95/sensitivity": {
+          "mean": 0.6016528925619834,
+          "ci_low": 0.5495661157024793,
+          "ci_high": 0.6553925619834711
+        },
+        "S2_sens95/specificity": {
+          "mean": 0.5724392771844441,
+          "ci_low": 0.5670853048533189,
+          "ci_high": 0.5779741787211031
+        },
+        "S2_sens95/precision": {
+          "mean": 0.015210585228479628,
+          "ci_low": 0.01384624304503208,
+          "ci_high": 0.016642897128295173
+        },
+        "S2_sens95/flagged_rate": {
+          "mean": 0.42943877323585794,
+          "ci_low": 0.42398943520706106,
+          "ci_high": 0.4346665626532341
+        }
+      }
+    },
+    "pneumonia_vs_no_finding": {
+      "n_images": 12170,
+      "n_positive": 242,
+      "prevalence": 0.019884963023829087,
+      "metrics": {
+        "auc": {
+          "mean": 0.6944122378901508,
+          "ci_low": 0.6615823877493612,
+          "ci_high": 0.7261540567440454
+        },
+        "auc_pr": {
+          "mean": 0.052355825748484165,
+          "ci_low": 0.04329943398726932,
+          "ci_high": 0.0689460016684301
+        },
+        "S1_youden/sensitivity": {
+          "mean": 0.7661157024793389,
+          "ci_low": 0.7230785123966943,
+          "ci_high": 0.8090909090909092
+        },
+        "S1_youden/specificity": {
+          "mean": 0.4828470824949698,
+          "ci_low": 0.4755692488262911,
+          "ci_high": 0.4903428906773978
+        },
+        "S1_youden/precision": {
+          "mean": 0.02948570107395996,
+          "ci_low": 0.02764690376499025,
+          "ci_high": 0.031201133607025817
+        },
+        "S1_youden/flagged_rate": {
+          "mean": 0.5221035332785539,
+          "ci_low": 0.5149055053410024,
+          "ci_high": 0.5292855382087099
+        },
+        "S2_sens95/sensitivity": {
+          "mean": 0.6016528925619834,
+          "ci_low": 0.5479132231404958,
+          "ci_high": 0.6553719008264463
+        },
+        "S2_sens95/specificity": {
+          "mean": 0.6761737089201878,
+          "ci_low": 0.6695669852448022,
+          "ci_high": 0.6831514084507042
+        },
+        "S2_sens95/precision": {
+          "mean": 0.03694402368418368,
+          "ci_low": 0.03364123319531946,
+          "ci_high": 0.040373979785471324
+        },
+        "S2_sens95/flagged_rate": {
+          "mean": 0.3293508627773213,
+          "ci_low": 0.322513147082991,
+          "ci_high": 0.33576129827444534
+        }
+      }
+    }
+  },
+  "dataset": {
+    "name": "chestmnist",
+    "size": 224,
+    "license": "CC BY 4.0",
+    "source_url": "https://zenodo.org/records/10519652/files/chestmnist_224.npz?download=1",
+    "md5_expected": "45bd33e6f06c3e8cdb481c74a89152aa",
+    "sha256": "793e07362dee5b933a1c39b9df4f8d14489408da36845039a30cd23bd01e99ac",
+    "label_names": [
+      "atelectasis",
+      "cardiomegaly",
+      "effusion",
+      "infiltration",
+      "mass",
+      "nodule",
+      "pneumonia",
+      "pneumothorax",
+      "consolidation",
+      "edema",
+      "emphysema",
+      "fibrosis",
+      "pleural",
+      "hernia"
+    ]
+  },
+  "thresholds_note": "Seuils S1/S2 fix\u00e9s sur la validation de PneumoniaMNIST, non recalcul\u00e9s sur ChestMNIST.",
+  "status": "exploratoire"
+}

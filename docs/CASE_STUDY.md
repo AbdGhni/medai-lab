@@ -28,8 +28,8 @@ Voir [RESULTS.md](RESULTS.md) (généré depuis les rapports). Lecture en trois 
 
 ## Limites
 
-Un seul jeu de données et un seul centre ; prévalence différente entre validation et test ; décalage de domaine non implémenté ; aucune validation clinique. Rien ici ne justifie un usage sur des patients.
+Un seul jeu de données et un seul centre ; prévalence différente entre validation et test ; décalage de domaine ChestMNIST exploratoire et confondu (AUC 0,53-0,64 contre 0,95-0,99 en domaine) ; aucune validation clinique. Rien ici ne justifie un usage sur des patients.
 
 ## Prolongements possibles
 
-Décalage de domaine avec un second jeu public ; recalibration sous décalage de prévalence ; étude de l'effet de la résolution.
+Entraînement multi-domaines ou adaptation de domaine ; recalibration sous décalage de prévalence ; étude de l'effet de la résolution.

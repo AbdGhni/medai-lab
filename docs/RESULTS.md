@@ -266,10 +266,38 @@ Randomisation en cascade des couches convolutives et linéaires (Adebayo et al.,
 
 Ce test est qualitatif et ne démontre pas la validité clinique des cartes ; tant qu'il n'est pas satisfait pour toutes les seeds, les cartes ne sont présentées qu'à titre indicatif.
 
+## Décalage de domaine : ChestMNIST (exploratoire)
+
+Les modèles entraînés sur PneumoniaMNIST (radiographies pédiatriques, un centre) sont appliqués sans modification au jeu de test de ChestMNIST (NIH ChestX-ray14, adultes, 22433 images à 224x224, licence CC BY 4.0). Seuils S1 et S2 fixés sur la validation de PneumoniaMNIST, jamais réajustés. Procédure fixée à l'avance (EVAL_PROTOCOL.md, section 11). Analyse exploratoire : le décalage mélange changement de population (enfants/adultes), définition différente du label (labels NIH extraits automatiquement de comptes rendus, bruités) et prévalence très différente. Aucune conclusion clinique.
+
+### Cible principale : pneumonie contre toutes les autres images
+
+22433 images, 242 positives (prévalence 1.08 %). Moyenne de 5 seeds, intervalle de bootstrap à 95 %.
+
+| Modèle | AUC PneumoniaMNIST | AUC ChestMNIST | AUC-PR | Sens. S1 | Spéc. S1 | Part signalée S1 | Sens. S2 | Spéc. S2 |
+|---|---|---|---|---|---|---|---|---|
+| densenet121 | 0.992 | 0.641 [0.607 ; 0.675] | 0.020 | 0.77 | 0.39 | 0.61 | 0.64 | 0.55 |
+| efficientnet_b0 | 0.985 | 0.600 [0.567 ; 0.632] | 0.015 | 0.67 | 0.47 | 0.54 | 0.54 | 0.60 |
+| resnet18 | 0.985 | 0.627 [0.591 ; 0.662] | 0.020 | 0.77 | 0.38 | 0.62 | 0.60 | 0.57 |
+| simple_cnn | 0.948 | 0.528 [0.494 ; 0.562] | 0.012 | 0.75 | 0.29 | 0.72 | 0.87 | 0.17 |
+
+### Cible secondaire : pneumonie contre images sans anomalie
+
+12170 images, 242 positives (prévalence 1.99 %). Moyenne de 5 seeds, intervalle de bootstrap à 95 %.
+
+| Modèle | AUC PneumoniaMNIST | AUC ChestMNIST | AUC-PR | Sens. S1 | Spéc. S1 | Part signalée S1 | Sens. S2 | Spéc. S2 |
+|---|---|---|---|---|---|---|---|---|
+| densenet121 | 0.992 | 0.713 [0.681 ; 0.744] | 0.057 | 0.77 | 0.49 | 0.51 | 0.64 | 0.66 |
+| efficientnet_b0 | 0.985 | 0.656 [0.625 ; 0.688] | 0.036 | 0.67 | 0.55 | 0.45 | 0.54 | 0.68 |
+| resnet18 | 0.985 | 0.694 [0.662 ; 0.726] | 0.052 | 0.77 | 0.48 | 0.52 | 0.60 | 0.68 |
+| simple_cnn | 0.948 | 0.565 [0.531 ; 0.600] | 0.024 | 0.75 | 0.33 | 0.67 | 0.87 | 0.20 |
+
+Lecture : l'AUC chute fortement par rapport à PneumoniaMNIST (de 0,95-0,99 à 0,53-0,64 sur la cible principale ; simple_cnn proche du hasard). Aux seuils fixes, la sensibilité est préservée en partie mais la spécificité s'effondre (la moitié ou plus des images sont signalées), et l'AUC-PR reste très faible face à une prévalence d'environ 1 %. Cette chute ne peut pas être attribuée à une seule cause : population, labels et prévalence changent simultanément. Elle montre qu'un modèle entraîné sur un jeu étroit ne se généralise pas tel quel, et elle ne dit rien de la performance de ces architectures sur ce jeu si elles y étaient entraînées.
+
 ## Ce que ces résultats ne montrent pas
 
 - Aucune validation clinique, aucune étude sur des patients en conditions réelles.
-- Un seul jeu de données public (PneumoniaMNIST, radiographies pédiatriques d'un seul centre) : la généralisation à d'autres hôpitaux, appareils ou populations n'est pas évaluée. Le décalage de domaine (ChestMNIST) n'est pas implémenté.
+- Un seul jeu de données public (PneumoniaMNIST, radiographies pédiatriques d'un seul centre) : la généralisation à d'autres hôpitaux, appareils ou populations n'est pas évaluée. Le décalage de domaine (ChestMNIST) est exploratoire et confondu (population, labels, prévalence).
 - La prévalence diffère entre validation et test, ce qui affecte seuils et calibration.
 - 10 doublons confirmés entre entraînement et validation (aucun entre entraînement et test), voir DATASETS.md.
 - Les comparaisons entre modèles ne valent que pour ce jeu de test et ces 5 seeds.
