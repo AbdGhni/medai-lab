@@ -1,9 +1,12 @@
 name: Tableau de bord statique
 
-# Déclenchement manuel : publie les rapports précalculés (aucun modèle d'inférence hébergé).
+# Déclenchement manuel, ou automatique quand les rapports, l'interface ou ce workflow changent : publie les rapports précalculés (aucun modèle d'inférence hébergé).
 # Prérequis : Settings > Pages > Source = GitHub Actions.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["reports/**", "apps/web/**", ".github/workflows/pages.yml"]
 
 permissions:
   contents: read
