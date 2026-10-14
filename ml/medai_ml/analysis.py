@@ -13,7 +13,7 @@ from typing import Any
 from . import DISCLAIMER, PROTOCOL_VERSION
 from .provenance import git_state, now_utc
 
-ANALYSIS_NAMES = {"robustness", "calibration", "gradcam_sanity", "comparison"}
+ANALYSIS_NAMES = {"robustness", "calibration", "gradcam_sanity", "comparison", "domain_shift"}
 
 
 def write_analysis(

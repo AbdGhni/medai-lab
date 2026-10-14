@@ -1,4 +1,4 @@
-"""Ligne de commande : python -m medai_ml {datasheet,gallery,run,compare,calibrate,robustness,sanity}."""
+"""Ligne de commande : python -m medai_ml {datasheet,gallery,run,compare,calibrate,robustness,sanity,domain-shift}."""
 
 from __future__ import annotations
 
@@ -40,6 +40,7 @@ def main(argv: list[str] | None = None) -> int:
     for name, text in (
         ("robustness", "Robustesse aux perturbations (test uniquement)."),
         ("sanity", "Test de sanité de Grad-CAM par randomisation des poids."),
+        ("domain-shift", "Décalage de domaine exploratoire sur ChestMNIST (test)."),
     ):
         a = sub.add_parser(name, help=text)
         a.add_argument("--run", required=True)
@@ -48,7 +49,7 @@ def main(argv: list[str] | None = None) -> int:
         a.add_argument("--root", default=str(DEFAULT_ROOT))
     args = p.parse_args(argv)
 
-    if args.cmd in {"compare", "calibrate", "robustness", "sanity"}:
+    if args.cmd in {"compare", "calibrate", "robustness", "sanity", "domain-shift"}:
         from . import analyze
 
         reports = Path(args.reports)
@@ -58,6 +59,8 @@ def main(argv: list[str] | None = None) -> int:
             out = analyze.calibrate_run(reports, args.run)
         elif args.cmd == "robustness":
             out = analyze.robustness_run(reports, Path(args.artifacts), args.run, Path(args.root))
+        elif args.cmd == "domain-shift":
+            out = analyze.domain_shift_run(reports, Path(args.artifacts), args.run, Path(args.root))
         else:
             out = analyze.sanity_run(reports, Path(args.artifacts), args.run, Path(args.root))
         print(f"Analyse écrite : {out}")

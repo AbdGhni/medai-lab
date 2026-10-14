@@ -24,6 +24,7 @@ from .compare import (
     paired_bootstrap_auc,
 )
 from .data import DEFAULT_ROOT, DataBundle, load_pneumoniamnist
+from .domain_shift import ChestTest, domain_shift_analysis, load_chestmnist_test
 from .explain import gradcam_sanity
 from .models import build_model
 from .report import EvaluationReport, load_report
@@ -198,3 +199,44 @@ def sanity_run(
         "passes_all_seeds": _all_pass([r["passes"] for r in per_seed]),
     }
     return write_analysis(reports_dir, run_id, "gradcam_sanity", payload)
+
+
+def domain_shift_run(
+    reports_dir: Path,
+    artifacts_dir: Path,
+    run_id: str,
+    root: Path = DEFAULT_ROOT,
+    device_choice: str = "auto",
+    n_boot: int = 1000,
+    chest: ChestTest | None = None,
+) -> Path:
+    """Évalue les poids d'un rapport sur ChestMNIST (test), sans ré-entraînement ni nouveau seuil."""
+    rep, _ = _run(reports_dir, run_id)
+    device = resolve_device(device_choice)
+    models = _load_models(rep, artifacts_dir, device)
+    thr = [{k: v.threshold for k, v in s.operating_points.items()} for s in rep.seeds]
+    data = chest or load_chestmnist_test(int(rep.config["size"]), Path(root))
+    out = domain_shift_analysis(
+        models,
+        thr,
+        data.images,
+        data.labels,
+        data.label_names,
+        device,
+        batch_size=int(rep.config.get("batch_size", 64)),
+        n_boot=n_boot,
+    )
+    out["dataset"] = {
+        "name": data.info.name,
+        "size": data.info.size,
+        "license": data.info.license,
+        "source_url": data.info.source_url,
+        "md5_expected": data.info.md5_expected,
+        "sha256": data.info.sha256,
+        "label_names": data.label_names,
+    }
+    out["thresholds_note"] = (
+        "Seuils S1/S2 fixés sur la validation de PneumoniaMNIST, non recalculés sur ChestMNIST."
+    )
+    out["status"] = "exploratoire"
+    return write_analysis(reports_dir, run_id, "domain_shift", out)

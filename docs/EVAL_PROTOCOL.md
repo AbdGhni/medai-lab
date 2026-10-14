@@ -13,7 +13,7 @@ Changements de la version 1.2
 - Section 7 : les prédictions de validation sont archivées avec les rapports (predictions.npz) pour ajuster la température sans toucher au test.
 - Section 9 : bootstrap de robustesse à 500 réplicats (au lieu de 2000) pour limiter le coût ; valeur consignée dans chaque fichier d'analyse.
 - Section 10 : critère du test de sanité fixé avant toute exécution (voir cette section).
-- Section 11 : non implémentée à ce jour (voir cette section).
+- Section 11 : implémentée le 14/10/2026 ; résolution, cibles et procédure fixées dans cette section avant toute exécution sur ChestMNIST.
 
 Ce protocole est figé avant tout entraînement. Toute modification ultérieure est faite par une nouvelle version datée, avec la raison du changement, et les résultats obtenus sous l'ancienne version restent publiés. Les analyses non prévues ici sont étiquetées "exploratoires" dans les rapports.
 
@@ -113,9 +113,19 @@ Rapport : AUC, sensibilité et spécificité aux seuils S1 et S2 (non recalculé
 
 ## 11. Décalage de domaine (analyse exploratoire, phase 4)
 
-Statut v1.2 : non implémentée. Elle exige de télécharger ChestMNIST (volume important) et une définition d'étiquette à valider ; elle ne sera lancée qu'avec l'accord explicite de l'utilisateur. Aucun résultat n'est annoncé.
+Statut v1.2 : implémentée (`medai_ml domain-shift`). Les choix ci-dessous ont été fixés avant tout résultat.
 
-Évaluation des modèles entraînés sur PneumoniaMNIST contre l'étiquette "pneumonia" de ChestMNIST (radiographies d'adultes, étiquetées automatiquement à partir de comptes rendus). Prévalence faible : AUC et AUC précision-rappel sont les métriques principales ; les seuils S1/S2 de PneumoniaMNIST sont appliqués sans changement. Les différences de population, de définition d'étiquette et de bruit d'étiquette sont rappelées dans le rapport. Aucune conclusion causale n'est tirée.
+**Question.** Que devient un modèle entraîné sur PneumoniaMNIST (enfants, un centre) quand on l'applique tel quel à des radiographies d'adultes d'une autre source ? Ce n'est pas une mesure de performance clinique.
+
+**Jeu de données.** ChestMNIST (NIH ChestX-ray14 redistribué par MedMNIST, CC BY 4.0), split de test uniquement, 224x224. Choix de la résolution : 224 est la résolution d'entraînement ; ce choix évite d'introduire un rééchantillonnage différent d'un jeu à l'autre, et le fichier correspondant (environ 3,9 Go) reste raisonnable, alors que 28, 64 et 128 obligeraient à agrandir les images avec perte de détail. Les deux jeux passent par la même chaîne de prétraitement MedMNIST.
+
+**Cible.** L'étiquette « Pneumonia » (lue par son nom dans les métadonnées MedMNIST, jamais par un indice codé en dur). Deux définitions, fixées à l'avance :
+1. pneumonie contre tout le reste (cible principale) ;
+2. pneumonie contre « aucune anomalie » (les 14 étiquettes à 0), sous-ensemble dont les négatifs ne portent aucune autre pathologie, donc moins de confusion avec des signes voisins.
+
+**Procédure.** Aucun réentraînement, aucun nouveau réglage : mêmes poids, mêmes seuils S1 et S2 (fixés sur la validation de PneumoniaMNIST), toutes les seeds. Mesures principales : AUC (indépendante de la prévalence) et AUC précision-rappel. Mesures secondaires aux seuils fixes : sensibilité, spécificité, précision et part d'images déclarées positives. Intervalles : bootstrap stratifié, 1000 réplicats, moyenne sur les seeds.
+
+**Lecture.** Un écart d'AUC mélange trois effets qu'on ne sépare pas : décalage d'images (adultes, appareils), définition différente de « pneumonie » (diagnostic clinique pédiatrique contre étiquette extraite automatiquement de comptes rendus) et bruit d'étiquette. La prévalence est très faible (de l'ordre de 1 %) : la précision aux seuils fixes est faible même pour un bon classement, et l'AUC précision-rappel doit être lue contre cette prévalence. Aucune conclusion causale, aucune valeur clinique.
 
 ## 12. Reproductibilité et traçabilité
 
