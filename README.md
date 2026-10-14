@@ -4,6 +4,24 @@ Prototype de recherche : plateforme d'évaluation reproductible de modèles d'IA
 
 **Ne pas utiliser pour un diagnostic ou une décision clinique.** Ce projet n'est pas un dispositif médical.
 
+**[Tableau de bord en ligne](https://abdghni.github.io/medai-lab/)** · [Vidéo de démonstration (45 s)](docs/media/demo.mp4) · [Résultats détaillés](docs/RESULTS.md) · [Étude de cas](docs/CASE_STUDY.md)
+
+![Page d'accueil du tableau de bord](docs/media/home.png)
+
+## En bref
+
+- **Problème :** les démonstrations d'IA médicale affichent souvent une seule métrique, sans protocole, sans incertitude, sans limites.
+- **Approche :** un pipeline hors ligne entraîne et évalue 4 modèles (5 seeds chacun) sur PneumoniaMNIST selon un protocole fixé à l'avance, et écrit des rapports immuables avec leur provenance. L'API et l'interface ne font que lire ces rapports ; aucun chiffre n'apparaît sans rapport source.
+- **Résultats :** AUC de 0,95 à 0,99 en domaine, avec comparaisons statistiques corrigées (Holm), calibration, robustesse aux perturbations et test de sanité Grad-CAM.
+- **Limites, assumées :** les seuils fixes ne tiennent pas sous perturbation ; le test de sanité Grad-CAM échoue sur certaines seeds ; sur ChestMNIST (adultes, test exploratoire), l'AUC tombe à 0,53-0,64. Prototype de recherche, aucun usage clinique.
+- **Ingénierie :** FastAPI, PyTorch, Next.js, tests (Python, web, bout en bout), CI GitHub Actions, Docker, déploiement automatique du tableau de bord statique.
+
+| Analyses d'un modèle | Décalage de domaine (exploratoire) |
+|---|---|
+| ![Robustesse](docs/media/robustness.png) | ![Décalage de domaine](docs/media/shift.png) |
+
+Le site en ligne est statique : il affiche les rapports réels, sans inférence en direct. La démo interactive (prédiction et Grad-CAM sur des images d'exemple) fonctionne en local avec l'API.
+
 ## État du projet
 
 Phases 1 à 4 réalisées : pipeline, API, interface, comparaison statistique, calibration, robustesse et test de sanité Grad-CAM sont implémentés, testés, et appliqués à de **vrais entraînements** (4 modèles x 5 seeds, PneumoniaMNIST 224x224, GPU T4). Les chiffres ci-dessous sont générés par `scripts/make_results.py` à partir des rapports versionnés ; le détail complet, avec leurs limites, est dans [docs/RESULTS.md](docs/RESULTS.md).
