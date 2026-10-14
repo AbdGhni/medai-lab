@@ -98,7 +98,7 @@ test("une évaluation sans analyses l'indique et n'affiche aucun chiffre", async
   }
   expect(target).not.toBeNull();
   await page.goto(`${WITH_REPORT}/evaluations/${target}/analyses`);
-  await expect(page.getByText("Aucune valeur n'est affichée.")).toHaveCount(4);
+  await expect(page.getByText("Aucune valeur n'est affichée.")).toHaveCount(5);
   const text = (await page.locator("main").innerText()).replace(/\s+/g, " ");
   expect(text).not.toMatch(INTERVAL);
   await expect(page.locator("svg[role=img]")).toHaveCount(0);
