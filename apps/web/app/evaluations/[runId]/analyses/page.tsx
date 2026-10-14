@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReliabilityPlot } from "@/components/ReliabilityPlot";
 import {
+  type DomainShiftAnalysis,
   type AnalysisList,
   type CalibrationAnalysis,
   type Ci,
@@ -28,6 +29,22 @@ const ROB_COLUMNS: [string, string][] = [
   ["S1_youden/specificity", "Spécificité (S1)"],
   ["S2_sens95/sensitivity", "Sensibilité (S2)"],
   ["S2_sens95/specificity", "Spécificité (S2)"],
+];
+
+const TARGET_LABELS: Record<string, string> = {
+  pneumonia_vs_all: "Pneumonie contre toutes les autres images (cible principale)",
+  pneumonia_vs_no_finding: "Pneumonie contre images sans anomalie (cible secondaire)",
+};
+
+const SHIFT_ROWS: [string, string][] = [
+  ["auc", "AUC ROC"],
+  ["auc_pr", "AUC précision-rappel"],
+  ["S1_youden/sensitivity", "Sensibilité (S1)"],
+  ["S1_youden/specificity", "Spécificité (S1)"],
+  ["S1_youden/flagged_rate", "Part d'images signalées (S1)"],
+  ["S2_sens95/sensitivity", "Sensibilité (S2)"],
+  ["S2_sens95/specificity", "Spécificité (S2)"],
+  ["S2_sens95/flagged_rate", "Part d'images signalées (S2)"],
 ];
 
 const CAL_ROWS: [string, string, string][] = [
@@ -57,11 +74,12 @@ export default async function AnalysesPage({ params }: { params: Promise<{ runId
   if (!detail) notFound();
   const list = (await serverGet<AnalysisList>(`${base}/analyses`))?.items ?? [];
   const has = (n: string) => list.some((a) => a.name === n);
-  const [comparison, calibration, robustness, sanity] = await Promise.all([
+  const [comparison, calibration, robustness, sanity, shift] = await Promise.all([
     has("comparison") ? serverGet<ComparisonAnalysis>(`${base}/analyses/comparison`) : null,
     has("calibration") ? serverGet<CalibrationAnalysis>(`${base}/analyses/calibration`) : null,
     has("robustness") ? serverGet<RobustnessAnalysis>(`${base}/analyses/robustness`) : null,
     has("gradcam_sanity") ? serverGet<SanityAnalysis>(`${base}/analyses/gradcam_sanity`) : null,
+    has("domain_shift") ? serverGet<DomainShiftAnalysis>(`${base}/analyses/domain_shift`) : null,
   ]);
   const { summary: s } = detail;
 
@@ -282,6 +300,50 @@ export default async function AnalysesPage({ params }: { params: Promise<{ runId
           </>
         ) : (
           <Missing what="Le test de sanité" />
+        )}
+      </section>
+
+      <section>
+        <h2 className="mb-1 text-xl font-semibold">Décalage de domaine : ChestMNIST (exploratoire)</h2>
+        {shift ? (
+          <>
+            <p className="max-w-[68ch] text-sm">
+              Le modèle, entraîné sur PneumoniaMNIST (enfants, un centre), est appliqué sans modification à des
+              radiographies d&apos;adultes ({shift.dataset.name}, {shift.dataset.size}×{shift.dataset.size},
+              licence {shift.dataset.license}). Les seuils restent ceux fixés sur la validation de PneumoniaMNIST.
+            </p>
+            <p className="text-muted mt-1 mb-4 max-w-[68ch] text-sm">
+              Exploratoire : la population, la définition du label (extraite automatiquement de comptes rendus) et la
+              prévalence changent en même temps ; aucune cause unique ne peut être attribuée à la baisse. Moyenne sur{" "}
+              {shift.n_seeds} seeds, intervalle bootstrap à 95 % ({shift.n_boot} réplicats).
+            </p>
+            <div className="space-y-6">
+              {Object.entries(shift.targets).map(([name, t]) => (
+                <table key={name} className="text-left text-sm">
+                  <caption className="mb-1 text-left font-medium">
+                    {TARGET_LABELS[name] ?? name} : {t.n_images} images, {t.n_positive} positives (prévalence{" "}
+                    {(t.prevalence * 100).toLocaleString("fr-FR", { maximumFractionDigits: 2 })} %)
+                  </caption>
+                  <thead className="text-muted">
+                    <tr>
+                      <th scope="col" className="pb-2 pr-6 font-normal">Mesure</th>
+                      <th scope="col" className="pb-2 font-normal">Estimation [intervalle à 95 %]</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SHIFT_ROWS.map(([k, label]) => (
+                      <tr key={k} className="border-rule border-t">
+                        <th scope="row" className="py-2 pr-6 text-left font-normal">{label}</th>
+                        <td className="py-2 tabular-nums">{cell(t.metrics[k])}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ))}
+            </div>
+          </>
+        ) : (
+          <Missing what="L'analyse de décalage de domaine" />
         )}
       </section>
     </div>

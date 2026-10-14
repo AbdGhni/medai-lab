@@ -185,6 +185,15 @@ export interface RobustnessAnalysis {
   perturbations: Record<string, { level: number; metrics: Record<string, Ci> }[]>;
 }
 
+export interface DomainShiftAnalysis {
+  n_boot: number;
+  n_seeds: number;
+  status: string;
+  thresholds_note: string;
+  dataset: { name: string; size: number; license: string };
+  targets: Record<string, { n_images: number; n_positive: number; prevalence: number; metrics: Record<string, Ci> }>;
+}
+
 export interface SanityAnalysis {
   model_id: string;
   passes_all_seeds: boolean | null;
