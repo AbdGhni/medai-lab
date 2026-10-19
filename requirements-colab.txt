@@ -130,7 +130,7 @@ packaging==26.3
     #   scikit-image
 pandas==3.0.6
     # via medmnist
-pillow==12.3.0
+pillow==13.0.0
     # via
     #   grad-cam
     #   imagehash
