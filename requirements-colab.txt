@@ -188,7 +188,7 @@ setuptools==84.0.0
     # via torch
 six==1.17.0
     # via python-dateutil
-starlette==1.7.0
+starlette==1.8.0
     # via fastapi
 sympy==1.14.0
     # via torch
