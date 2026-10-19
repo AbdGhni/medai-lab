@@ -28,7 +28,7 @@ filelock==4.1.1
     #   torch
 fire==0.7.1
     # via medmnist
-fonttools==4.66.1
+fonttools==4.67.0
     # via matplotlib
 fsspec==2026.9.0
     # via
